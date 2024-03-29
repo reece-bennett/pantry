@@ -3,14 +3,11 @@
 	"tasks": [
     {
       "type": "npm",
-      "script": "dev",
+      "script": "build",
+      "group": "build",
       "problemMatcher": [],
-      "label": "npm: dev",
-      "detail": "vite dev",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
+      "label": "npm: build",
+      "detail": "vite build",
     }
   ]
 }
