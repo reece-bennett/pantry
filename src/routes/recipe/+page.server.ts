@@ -1,8 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { recipes } from "./data";
+import { getRecipes } from "$lib/server/database";
 
 export const load = (async () => {
   return {
-    recipes
+    recipes: getRecipes()
   };
 }) satisfies PageServerLoad;

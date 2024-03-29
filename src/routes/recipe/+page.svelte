@@ -5,6 +5,10 @@
 
 <h1>Recipes</h1>
 
+<p>
+  <a href="/recipe/new">Add recipe</a>
+</p>
+
 <ul>
   {#each data.recipes as {slug, title}}
     <li>

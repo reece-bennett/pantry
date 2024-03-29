@@ -7,3 +7,7 @@
 <h1>{data.recipe.title}</h1>
 
 <p>{data.recipe.description}</p>
+
+<p>
+  <a href="/recipe">Back</a>
+</p>

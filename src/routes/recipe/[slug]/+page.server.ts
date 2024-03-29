@@ -1,9 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { recipes } from '../data';
 import { error } from '@sveltejs/kit';
+import { getRecipe } from "$lib/server/database";
 
 export const load = (async ({ params }) => {
-  const recipe = recipes.find((recipe) => recipe.slug === params.slug);
+  const recipe = getRecipe(params.slug);
 
   if (!recipe) {
     throw error(404);
