@@ -4,7 +4,7 @@
   let ingredients = [
     {
       ingredient: '',
-      unit: '',
+      unit: 'g',
       amount: ''
     }
   ];
@@ -28,32 +28,30 @@
   }
 </script>
 
-<h1>Create new recipe</h1>
-
-{#if form?.error}
-  <p class="error">{form.error}</p>
-{/if}
-
-<form method="post">
-  <div class="form-group">
-    <label for="title">Title:</label>
+<main class="container">
+  <h1>Create new recipe</h1>
+  
+  {#if form?.error}
+    <p class="error">{form.error}</p>
+  {/if}
+  
+  <form method="post">
+    <label for="title">Title</label>
     <input name="title" type="text" value={form?.data.title ?? ''} />
-  </div>
-
-  <div class="form-group">
-    <label for="description">Description:</label>
+  
+    <label for="description">Description</label>
     <textarea name="description" value={form?.data.description.toString() ?? ''}></textarea>
-  </div>
-
-  <div class="form-group">
-    <span>Ingredients:</span>
+  
+    <h2>Ingredients</h2>
     {#each ingredients as ingredient, i}
-      <div class="row">
+      <!-- svelte-ignore a11y-no-redundant-roles -->
+      <fieldset role="group">
         <input
           name="amount-{i}"
           class="amount"
           type="text"
           inputmode="numeric"
+          placeholder="0"
           bind:value={ingredient.amount}
         />
         <select name="unit-{i}" bind:value={ingredient.unit}>
@@ -62,67 +60,43 @@
           <option value="tsp">tsp</option>
           <option value="tbsp">tbsp</option>
         </select>
-        <input name="ingredient-{i}" type="text" bind:value={ingredient.ingredient} />
+        <input name="ingredient-{i}" type="text" placeholder="Ingredient" bind:value={ingredient.ingredient} />
         <button
           type="button"
           on:click|preventDefault={() => removeIngredient(i)}
           disabled={ingredients.length < 2}
         >
-          X
+          ❌
         </button>
-      </div>
+      </fieldset>
     {/each}
     <button type="button" on:click|preventDefault={addIngredient}>Add</button>
-  </div>
-
-  <div class="form-group">
-    <span>Steps:</span>
+  
+    <h2>Steps</h2>
     {#each steps as step, i}
-      <div class="row">
+      <!-- svelte-ignore a11y-no-redundant-roles -->
+      <fieldset role="group">
         <textarea name="step-{1}" bind:value={step}></textarea>
         <button
           type="button"
           on:click|preventDefault={() => removeStep(i)}
           disabled={steps.length < 2}
         >
-          X
+          ❌
         </button>
-      </div>
+      </fieldset>
     {/each}
     <button type="button" on:click|preventDefault={addStep}>Add</button>
-  </div>
-
-  <div>
-    <button type="submit">Submit</button>
-    <a href="/recipe">Cancel</a>
-  </div>
-</form>
-
-<style>
-  .form-group {
-    margin-bottom: 1em;
-    width: 300px;
-    position: relative;
-  }
-
-  label {
-    display: block;
-  }
-
-  .form-group > input,
-  .form-group > textarea {
-    width: 100%;
-  }
-
-  button[type='submit'] {
-    margin-right: 0.5em;
-  }
-
-  .amount {
-    width: 3em;
-  }
-
-  .row {
-    display: flex;
-  }
-</style>
+  
+    <div>
+      <button type="submit">Submit</button>
+      <a href="/recipe">Cancel</a>
+    </div>
+  </form>
+  
+  <style>
+    input.amount {
+      width: 25%;
+    }
+  </style>
+</main>

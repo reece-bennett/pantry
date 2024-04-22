@@ -1,4 +1,5 @@
 {
   "workbench.tree.indent": 16,
-  "editor.detectIndentation": false
+  "editor.detectIndentation": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

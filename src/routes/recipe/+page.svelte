@@ -3,16 +3,18 @@
   export let data: PageData;
 </script>
 
-<h1>Recipes</h1>
+<main class="container">
+  <h1>Recipes</h1>
 
-<p>
-  <a href="/recipe/new">Add recipe</a>
-</p>
+  <p>
+    <a href="/recipe/new">Add recipe</a>
+  </p>
 
-<ul>
-  {#each data.recipes as {slug, title}}
-    <li>
-      <a href="/recipe/{slug}">{title}</a>
-    </li>
-  {/each}
-</ul>
+  <ul>
+    {#each data.recipes as { slug, title }}
+      <li>
+        <a href="/recipe/{slug}">{title}</a>
+      </li>
+    {/each}
+  </ul>
+</main>
