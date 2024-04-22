@@ -3,6 +3,6 @@ import { getRecipes } from "$lib/server/database";
 
 export const load = (async () => {
   return {
-    recipes: getRecipes()
+    recipes: await getRecipes()
   };
 }) satisfies PageServerLoad;

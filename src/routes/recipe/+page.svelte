@@ -11,9 +11,9 @@
   </p>
 
   <ul>
-    {#each data.recipes as { slug, title }}
+    {#each data.recipes as { slug, name }}
       <li>
-        <a href="/recipe/{slug}">{title}</a>
+        <a href="/recipe/{slug}">{name}</a>
       </li>
     {/each}
   </ul>

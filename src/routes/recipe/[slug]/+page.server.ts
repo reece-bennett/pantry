@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit';
 import { getRecipe } from "$lib/server/database";
 
 export const load = (async ({ params }) => {
-  const recipe = getRecipe(params.slug);
+  const recipe = await getRecipe(params.slug);
 
   if (!recipe) {
     throw error(404);

@@ -1,0 +1,124 @@
+[
+  {
+    "slug": "lamb-pistachio-tagine",
+    "name": "Lamb & Pistachio Tagine",
+    "description": "Inspired by the signature North African dish, you'll whip up a speedy tagine in 10 minutes! Our supercharged twist has fragrant ras el hanout, pistachios and dates, and is served over couscous. Yum!",
+    "servings": 2,
+    "time": 10,
+    "ingredients": {
+      "create": [
+        {
+          "amount": 32,
+          "unit": "g",
+          "ingredient": "Tomato paste"
+        },
+        {
+          "amount": 1,
+          "unit": "x",
+          "ingredient": "Courgette"
+        },
+        {
+          "amount": 1,
+          "unit": "tbsp",
+          "ingredient": "Ras el hanout"
+        },
+        {
+          "amount": 1,
+          "unit": "tsp",
+          "ingredient": "Ground cumin"
+        },
+        {
+          "amount": 11,
+          "unit": "g",
+          "ingredient": "Beef stock mix"
+        },
+        {
+          "amount": 120,
+          "unit": "g",
+          "ingredient": "Couscous"
+        },
+        {
+          "amount": 250,
+          "unit": "g",
+          "ingredient": "Lamb mince"
+        },
+        {
+          "amount": 25,
+          "unit": "g",
+          "ingredient": "Pistachio nuts"
+        },
+        {
+          "amount": 30,
+          "unit": "g",
+          "ingredient": "Chopped dates"
+        },
+        {
+          "amount": 2,
+          "unit": "x",
+          "ingredient": "Garlic cloves"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "mexican-style-pork-chilli",
+    "name": "Mexican-Style Pork Chilli With Apple Salsa",
+    "description": "For a comforting treat, you'll serve smoky pork and chipotle chilli over wholesome bulgur. Top with an apple and red onion salsa to cut through the richness, and plenty of cheddar. Smokin'!",
+    "servings": 2,
+    "time": 35,
+    "ingredients": {
+      "create": [
+        {
+          "amount": 32,
+          "unit": "g",
+          "ingredient": "Tomato paste"
+        },
+        {
+          "amount": 11,
+          "unit": "g",
+          "ingredient": "Beef stock mix"
+        },
+        {
+          "amount": 40,
+          "unit": "g",
+          "ingredient": "Chipotle paste"
+        },
+        {
+          "amount": 30,
+          "unit": "ml",
+          "ingredient": "Red wine vinegar"
+        },
+        {
+          "amount": 250,
+          "unit": "g",
+          "ingredient": "Pork mince"
+        },
+        {
+          "amount": 130,
+          "unit": "g",
+          "ingredient": "Bulgur wheat"
+        },
+        {
+          "amount": 1,
+          "unit": "x",
+          "ingredient": "Apple"
+        },
+        {
+          "amount": 1,
+          "unit": "tsp",
+          "ingredient": "Ground allspice"
+        },
+        {
+          "amount": 40,
+          "unit": "g",
+          "ingredient": "Cheddar cheese"
+        },
+        {
+          "amount": 1,
+          "unit": "x",
+          "ingredient": "Red onion"
+        }
+      ]
+    }
+  }
+]
