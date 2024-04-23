@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import type { Recipe } from '$lib/schemas/recipe';
+import prisma from './prisma';
 
 const slugRegex = /\W/gm;
 
@@ -21,12 +20,23 @@ export function getRecipe(slug: string) {
   });
 }
 
-export function createRecipe(title: string, description: string) {
-  // recipes.push({
-  //   slug: createSlug(title),
-  //   title,
-  //   description
-  // })
+export function createRecipe(recipe: Recipe) {
+  return prisma.recipe.create({
+    data: {
+      name: recipe.title,
+      description: recipe.description,
+      servings: 0,
+      slug: createSlug(recipe.title),
+      time: 0,
+      ingredients: {
+        create: recipe.ingredient.map((ingredient, i) => ({
+          amount: recipe.amount[i],
+          unit: recipe.unit[i],
+          ingredient
+        }))
+      }
+    }
+  });
 }
 
 function createSlug(title: string): string {

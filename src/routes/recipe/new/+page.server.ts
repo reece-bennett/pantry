@@ -1,6 +1,8 @@
-import type { PageServerLoad } from './$types';
+import { recipeSchema } from '$lib/schemas/recipe';
 import { createRecipe } from '$lib/server/database';
 import { fail, redirect } from '@sveltejs/kit';
+import { z, type ZodIssue } from 'zod';
+import type { PageServerLoad } from './$types';
 
 export const load = (async () => {
   return {};
@@ -8,22 +10,45 @@ export const load = (async () => {
 
 export const actions = {
   default: async ({ request }) => {
-    const data = await request.formData();
-    const title = data.get('title')?.toString();
-    const description = data.get('description')?.toString();
-    if (!title || title === '') {
-      return fail(422, {
-        data: Object.fromEntries(data.entries()),
-        error: 'Title must have a value'
-      });
+    const formData = await request.formData();
+    const result = recipeSchema.safeParse(formData);
+
+    if (!result.success) {
+      const returnThing = {
+        success: false,
+        data: createData(formData),
+        errors: parseErrors(result)
+      };
+      return fail(400, returnThing);
     }
-    if (!description || description === '') {
-      return fail(422, {
-        data: Object.fromEntries(data.entries()),
-        error: 'Description must have a value'
-      });
-    }
-    createRecipe(title, description);
+
+    await createRecipe(result.data);
+
     redirect(303, '/recipe');
   }
 };
+
+function parseErrors(result: z.SafeParseError<FormData>) {
+  const flattened = result.error.flatten((issue: ZodIssue) => ({
+    message: issue.message,
+    path: issue.path
+  })).fieldErrors;
+  const errors: { [x: string]: string } = {};
+  for (const [k, v] of Object.entries(flattened)) {
+    for (const { message, path } of v) {
+      errors[k + (path[1] ?? '')] = message;
+    }
+  }
+  return errors;
+}
+
+function createData(formData: FormData) {
+  return {
+    title: formData.get('title')?.toString(),
+    description: formData.get('description')?.toString(),
+    amounts: formData.getAll('amount').map((x) => x.toString()),
+    units: formData.getAll('unit').map((x) => x.toString()),
+    ingredients: formData.getAll('ingredient').map((x) => x.toString()),
+    steps: formData.getAll('step').map((x) => x.toString())
+  };
+}
