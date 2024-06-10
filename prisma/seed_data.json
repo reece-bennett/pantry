@@ -9,53 +9,53 @@
       "create": [
         {
           "amount": 32,
-          "unit": "g",
-          "ingredient": "Tomato paste"
+          "unitId": 1,
+          "ingredientId": 18
         },
         {
           "amount": 1,
-          "unit": "x",
-          "ingredient": "Courgette"
+          "unitId": 2,
+          "ingredientId": 7
         },
         {
           "amount": 1,
-          "unit": "tbsp",
-          "ingredient": "Ras el hanout"
+          "unitId": 3,
+          "ingredientId": 15
         },
         {
           "amount": 1,
-          "unit": "tsp",
-          "ingredient": "Ground cumin"
+          "unitId": 4,
+          "ingredientId": 11
         },
         {
           "amount": 11,
-          "unit": "g",
-          "ingredient": "Beef stock mix"
+          "unitId": 1,
+          "ingredientId": 2
         },
         {
           "amount": 120,
-          "unit": "g",
-          "ingredient": "Couscous"
+          "unitId": 1,
+          "ingredientId": 8
         },
         {
           "amount": 250,
-          "unit": "g",
-          "ingredient": "Lamb mince"
+          "unitId": 1,
+          "ingredientId": 12
         },
         {
           "amount": 25,
-          "unit": "g",
-          "ingredient": "Pistachio nuts"
+          "unitId": 1,
+          "ingredientId": 13
         },
         {
           "amount": 30,
-          "unit": "g",
-          "ingredient": "Chopped dates"
+          "unitId": 1,
+          "ingredientId": 6
         },
         {
           "amount": 2,
-          "unit": "x",
-          "ingredient": "Garlic cloves"
+          "unitId": 2,
+          "ingredientId": 9
         }
       ]
     }
@@ -70,53 +70,53 @@
       "create": [
         {
           "amount": 32,
-          "unit": "g",
-          "ingredient": "Tomato paste"
+          "unitId": 1,
+          "ingredientId": 18
         },
         {
           "amount": 11,
-          "unit": "g",
-          "ingredient": "Beef stock mix"
+          "unitId": 1,
+          "ingredientId": 2
         },
         {
           "amount": 40,
-          "unit": "g",
-          "ingredient": "Chipotle paste"
+          "unitId": 1,
+          "ingredientId": 5
         },
         {
           "amount": 30,
-          "unit": "ml",
-          "ingredient": "Red wine vinegar"
+          "unitId": 5,
+          "ingredientId": 17
         },
         {
           "amount": 250,
-          "unit": "g",
-          "ingredient": "Pork mince"
+          "unitId": 1,
+          "ingredientId": 14
         },
         {
           "amount": 130,
-          "unit": "g",
-          "ingredient": "Bulgur wheat"
+          "unitId": 1,
+          "ingredientId": 3
         },
         {
           "amount": 1,
-          "unit": "x",
-          "ingredient": "Apple"
+          "unitId": 2,
+          "ingredientId": 1
         },
         {
           "amount": 1,
-          "unit": "tsp",
-          "ingredient": "Ground allspice"
+          "unitId": 4,
+          "ingredientId": 10
         },
         {
           "amount": 40,
-          "unit": "g",
-          "ingredient": "Cheddar cheese"
+          "unitId": 1,
+          "ingredientId": 4
         },
         {
           "amount": 1,
-          "unit": "x",
-          "ingredient": "Red onion"
+          "unitId": 2,
+          "ingredientId": 16
         }
       ]
     }
