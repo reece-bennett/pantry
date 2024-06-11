@@ -35,6 +35,9 @@ async function main() {
               }
             }
           }))
+        },
+        steps: {
+          create: recipe.steps.map((content) => ({ content }))
         }
       }
     });

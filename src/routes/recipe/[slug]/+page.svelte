@@ -17,6 +17,18 @@
     {/each}
   </ul>
 
+  <h2>Steps</h2>
+
+  <ol>
+    {#each data.recipe.steps as step}
+      <li>
+        {#each step.content.split('\n') as paragraph}
+          <p>{paragraph}</p>
+        {/each}
+      </li>
+    {/each}
+  </ol>
+
   <p>
     <a href="/recipe">Back</a>
   </p>

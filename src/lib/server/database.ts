@@ -32,7 +32,8 @@ export function getRecipe(slug: string) {
           ingredient: true,
           unit: true
         }
-      }
+      },
+      steps: true
     }
   });
 }
@@ -64,6 +65,9 @@ export function createRecipe(recipe: Recipe) {
             }
           }
         }))
+      },
+      steps: {
+        create: recipe.step.map((step) => ({ content: step }))
       }
     }
   });

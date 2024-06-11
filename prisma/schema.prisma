@@ -29,6 +29,13 @@ model RecipeIngredient {
   @@id([recipeId, ingredientName, unitName])
 }
 
+model Step {
+  id       Int    @id @default(autoincrement())
+  recipeId Int
+  content  String
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+}
+
 model Recipe {
   id          Int                @id @default(autoincrement())
   slug        String             @db.VarChar
@@ -37,4 +44,5 @@ model Recipe {
   servings    Int
   time        Int
   ingredients RecipeIngredient[]
+  steps       Step[]
 }
