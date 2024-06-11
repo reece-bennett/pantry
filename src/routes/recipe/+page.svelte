@@ -4,6 +4,10 @@
 </script>
 
 <main class="container">
+  <p>
+    <a href="/">Back</a>
+  </p>
+
   <h1>Recipes</h1>
 
   <p>
@@ -18,3 +22,9 @@
     {/each}
   </ul>
 </main>
+
+<style>
+  h1 {
+    margin-top: 0;
+  }
+</style>

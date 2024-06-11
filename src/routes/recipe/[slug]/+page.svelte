@@ -5,9 +5,15 @@
 </script>
 
 <main class="container">
+  <p>
+    <a href="/recipe">Back</a>
+  </p>
+  
   <h1>{data.recipe.name}</h1>
 
   <p>{data.recipe.description}</p>
+
+  <p>Serves: {data.recipe.servings}<br>Time: {data.recipe.time} mins</p>
 
   <h2>Ingredients</h2>
 
@@ -28,8 +34,10 @@
       </li>
     {/each}
   </ol>
-
-  <p>
-    <a href="/recipe">Back</a>
-  </p>
 </main>
+
+<style>
+  h1 {
+    margin-top: 0;
+  }
+</style>

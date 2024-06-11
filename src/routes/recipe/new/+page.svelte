@@ -44,6 +44,10 @@
 </script>
 
 <main class="container">
+  <p>
+    <a href="/recipe">Back</a>
+  </p>
+
   <h1>Create new recipe</h1>
 
   <form method="post" use:enhance>
@@ -102,7 +106,7 @@
           valueFieldName="name"
           noInputStyles
           hideArrow
-          create=true
+          create="true"
           createText="New ingredient will be created."
         />
 
@@ -147,6 +151,10 @@
   </form>
 
   <style>
+    h1 {
+      margin-top: 0;
+    }
+
     input.amount,
     select.unit {
       width: 25%;
