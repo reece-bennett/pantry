@@ -1,13 +1,17 @@
 <script lang="ts">
   import type { ActionData } from './$types.js';
   import { enhance } from '$app/forms';
+  import type { PageData } from './$types.js';
+  // @ts-expect-error
+  import AutoComplete from 'simple-svelte-autocomplete';
 
+  export let data: PageData;
   export let form: ActionData;
 
   let ingredients = [
     {
       ingredient: '',
-      unit: 'g',
+      unit: data.units[0].name,
       amount: ''
     }
   ];
@@ -15,13 +19,13 @@
   if (form?.data.amounts) {
     ingredients = form?.data.amounts.map((amount, i) => ({
       amount,
-      unit: form?.data.units[i] ?? '',
+      unit: form?.data.units[i] ?? data.units[0].name,
       ingredient: form?.data.ingredients[i] ?? ''
     }));
   }
 
   function addIngredient() {
-    ingredients = [...ingredients, { ingredient: '', unit: 'g', amount: '' }];
+    ingredients = [...ingredients, { ingredient: '', unit: data.units[0].name, amount: '' }];
   }
 
   function removeIngredient(i: number) {
@@ -76,24 +80,32 @@
           type="text"
           inputmode="numeric"
           bind:value={ingredient.amount}
-          aria-invalid={form?.errors?.['amount' + i] ? 'true' : undefined}
+          aria-invalid={form?.errors?.[`amount${i}`] ? 'true' : undefined}
         />
+
         <select
           name="unit"
+          class="unit"
           bind:value={ingredient.unit}
-          aria-invalid={form?.errors?.['unit' + i] ? 'true' : undefined}
+          aria-invalid={form?.errors?.[`unit${i}`] ? 'true' : undefined}
         >
-          <option value="g">g</option>
-          <option value="ml">ml</option>
-          <option value="tsp">tsp</option>
-          <option value="tbsp">tbsp</option>
+          {#each data.units as unit}
+            <option value={unit.name}>{unit.name}</option>
+          {/each}
         </select>
-        <input
+
+        <AutoComplete
           name="ingredient"
-          type="text"
+          items={data.ingredients}
           bind:value={ingredient.ingredient}
-          aria-invalid={form?.errors?.['ingredient' + i] ? 'true' : undefined}
+          labelFieldName="name"
+          valueFieldName="name"
+          noInputStyles
+          hideArrow
+          create=true
+          createText="New ingredient will be created."
         />
+
         <button
           type="button"
           on:click|preventDefault={() => removeIngredient(i)}
@@ -135,8 +147,13 @@
   </form>
 
   <style>
-    input.amount {
+    input.amount,
+    select.unit {
       width: 25%;
+    }
+
+    [data-svelte-typeahead] {
+      width: 50%;
     }
 
     .error {

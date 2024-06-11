@@ -3,8 +3,20 @@ import prisma from './prisma';
 
 const slugRegex = /\W/gm;
 
-export function getRecipes() {
+export function getAllRecipes() {
   return prisma.recipe.findMany();
+}
+
+export function getAllUnits() {
+  return prisma.unit.findMany();
+}
+
+export function getAllIngredients() {
+  return prisma.ingredient.findMany({
+    orderBy: {
+      name: 'asc'
+    }
+  });
 }
 
 export function getRecipe(slug: string) {
@@ -36,8 +48,21 @@ export function createRecipe(recipe: Recipe) {
       ingredients: {
         create: recipe.ingredient.map((ingredient, i) => ({
           amount: recipe.amount[i],
-          unit: recipe.unit[i],
-          ingredient
+          unit: {
+            connect: {
+              name: recipe.unit[i]
+            }
+          },
+          ingredient: {
+            connectOrCreate: {
+              where: {
+                name: ingredient
+              },
+              create: {
+                name: ingredient
+              }
+            }
+          }
         }))
       }
     }

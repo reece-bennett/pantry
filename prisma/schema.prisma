@@ -8,27 +8,25 @@ datasource db {
 }
 
 model Ingredient {
-  id     Int                @id @default(autoincrement())
-  name   String             @db.VarChar
+  name   String             @id
   usedIn RecipeIngredient[]
 }
 
 model Unit {
-  id     Int                @id @default(autoincrement())
-  name   String             @db.VarChar
+  name   String             @id
   usedIn RecipeIngredient[]
 }
 
 model RecipeIngredient {
-  recipeId     Int
-  ingredientId Int
-  unitId       Int
-  recipe       Recipe     @relation(fields: [recipeId], references: [id])
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
-  unit         Unit       @relation(fields: [unitId], references: [id])
-  amount       Float
+  recipeId       Int
+  ingredientName String
+  unitName       String
+  recipe         Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient     Ingredient @relation(fields: [ingredientName], references: [name])
+  unit           Unit       @relation(fields: [unitName], references: [name])
+  amount         Float
 
-  @@id([recipeId, ingredientId, unitId])
+  @@id([recipeId, ingredientName, unitName])
 }
 
 model Recipe {

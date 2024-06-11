@@ -1,11 +1,14 @@
 import { recipeSchema } from '$lib/schemas/recipe';
-import { createRecipe } from '$lib/server/database';
+import { createRecipe, getAllIngredients, getAllUnits } from '$lib/server/database';
 import { fail, redirect } from '@sveltejs/kit';
 import { z, type ZodIssue } from 'zod';
 import type { PageServerLoad } from './$types';
 
 export const load = (async () => {
-  return {};
+  return {
+    units: await getAllUnits(),
+    ingredients: await getAllIngredients()
+  };
 }) satisfies PageServerLoad;
 
 export const actions = {
