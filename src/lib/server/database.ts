@@ -15,7 +15,12 @@ export function getRecipe(slug: string) {
       }
     },
     include: {
-      ingredients: true
+      ingredients: {
+        include: {
+          ingredient: true,
+          unit: true
+        }
+      }
     }
   });
 }

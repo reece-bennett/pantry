@@ -42,10 +42,12 @@ Pantry uses [Prisma ORM](https://www.prisma.io/) for database migrations and que
 ### Making changes
 
 1. Edit the schema at `prisma/schema.prisma` as required (and `prisma/seed.ts` for new seed data)
-2. Optionally run `npx prisma db push` to push changes to the database for testing without creating a migration
-3. Run `npx prisma migrate dev --name <migration_name>` to create a migration with the changes
+2. Format with `npx prisma format` and validate with `npx prisma validate`
+3. Optionally run `npx prisma db push` to push changes to the database for testing without creating a migration
+4. Run `npx prisma migrate dev --name <migration_name>` to create a migration with the changes
 
 ### Other commands
 
 - `npx prisma migrate reset` to reset the database back to the last migration and runs seeding
 - `npx prisma generate` to generate the client (should be automatically ran on most `migrate` or `db` commands)
+- `npx prisma migrate diff --from-schema-datasource prisma/schema.prisma --to-schema-datamodel prisma/schema.prisma` to diff the DB against the schema

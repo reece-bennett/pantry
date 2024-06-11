@@ -13,7 +13,7 @@
 
   <ul>
     {#each data.recipe.ingredients as { amount, ingredient, unit }}
-      <li>{amount} {#if unit !== 'x'}{unit}{/if} {ingredient}</li>
+      <li>{amount} {#if unit.name !== 'x'}{unit.name}{/if} {ingredient.name}</li>
     {/each}
   </ul>
 
