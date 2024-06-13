@@ -1,3 +1,4 @@
+import type { ListSubmission } from '$lib/schemas/listSubmission';
 import type { Recipe } from '$lib/schemas/recipe';
 import prisma from './prisma';
 
@@ -68,6 +69,23 @@ export function createRecipe(recipe: Recipe) {
       },
       steps: {
         create: recipe.step.map((step) => ({ content: step }))
+      }
+    }
+  });
+}
+
+export function createList(listSubmission: ListSubmission) {
+  return prisma.list.create({
+    data: {
+      meals: {
+        create: Object.entries(listSubmission).map(([slug, servings]) => ({
+          recipe: {
+            connect: {
+              slug
+            }
+          },
+          servings
+        }))
       }
     }
   });

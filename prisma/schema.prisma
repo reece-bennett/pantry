@@ -38,11 +38,27 @@ model Step {
 
 model Recipe {
   id          Int                @id @default(autoincrement())
-  slug        String             @db.VarChar
-  name        String             @db.VarChar
-  description String             @db.VarChar
+  slug        String             @unique
+  name        String
+  description String
   servings    Int
   time        Int
   ingredients RecipeIngredient[]
   steps       Step[]
+  usedIn      Meal[]
+}
+
+model List {
+  id    Int    @id @default(autoincrement())
+  meals Meal[]
+}
+
+model Meal {
+  recipeId Int
+  listId   Int
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  servings Int
+  usedIn   List   @relation(fields: [listId], references: [id])
+
+  @@id([recipeId, listId])
 }
