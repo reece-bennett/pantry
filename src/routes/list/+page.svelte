@@ -13,6 +13,14 @@
   <p>
     <a href="/list/new">Create list</a>
   </p>
+
+  <ul>
+    {#each data.lists as { id }}
+      <li>
+        <a href="/list/{id}">{id}</a>
+      </li>
+    {/each}
+  </ul>
 </main>
 
 <style>

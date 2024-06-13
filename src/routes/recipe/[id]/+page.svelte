@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { PageData } from './$types';
-
   export let data: PageData;
 </script>
 
@@ -8,18 +7,22 @@
   <p>
     <a href="/recipe">Back</a>
   </p>
-  
+
   <h1>{data.recipe.name}</h1>
 
   <p>{data.recipe.description}</p>
 
-  <p>Serves: {data.recipe.servings}<br>Time: {data.recipe.time} mins</p>
+  <p>Serves: {data.recipe.servings}<br />Time: {data.recipe.time} mins</p>
 
   <h2>Ingredients</h2>
 
   <ul>
     {#each data.recipe.ingredients as { amount, ingredient, unit }}
-      <li>{amount} {#if unit.name !== 'x'}{unit.name}{/if} {ingredient.name}</li>
+      <li>
+        {amount}
+        {#if unit.name !== 'x'}{unit.name}{/if}
+        {ingredient.name}
+      </li>
     {/each}
   </ul>
 

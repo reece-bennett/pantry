@@ -20,12 +20,33 @@ export function getAllIngredients() {
   });
 }
 
-export function getRecipe(id: string) {
-  return prisma.recipe.findFirst({
+export function getAllLists() {
+  return prisma.list.findMany();
+}
+
+export function getList(id: number) {
+  return prisma.list.findUnique({
     where: {
-      id: {
-        equals: id
+      id
+    },
+    include: {
+      meals: {
+        include: {
+          recipe: {
+            include: {
+              ingredients: true
+            }
+          }
+        }
       }
+    }
+  });
+}
+
+export function getRecipe(id: string) {
+  return prisma.recipe.findUnique({
+    where: {
+      id
     },
     include: {
       ingredients: {
