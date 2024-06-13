@@ -18,10 +18,10 @@ model Unit {
 }
 
 model RecipeIngredient {
-  recipeId       Int
+  recipeId       String
   ingredientName String
   unitName       String
-  recipe         Recipe     @relation(fields: [recipeId], references: [id])
+  recipe         Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   ingredient     Ingredient @relation(fields: [ingredientName], references: [name])
   unit           Unit       @relation(fields: [unitName], references: [name])
   amount         Float
@@ -31,14 +31,13 @@ model RecipeIngredient {
 
 model Step {
   id       Int    @id @default(autoincrement())
-  recipeId Int
+  recipeId String
   content  String
-  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 }
 
 model Recipe {
-  id          Int                @id @default(autoincrement())
-  slug        String             @unique
+  id          String             @id
   name        String
   description String
   servings    Int
@@ -54,11 +53,11 @@ model List {
 }
 
 model Meal {
-  recipeId Int
+  recipeId String
   listId   Int
   recipe   Recipe @relation(fields: [recipeId], references: [id])
   servings Int
-  usedIn   List   @relation(fields: [listId], references: [id])
+  usedIn   List   @relation(fields: [listId], references: [id], onDelete: Cascade)
 
   @@id([recipeId, listId])
 }

@@ -5,16 +5,17 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.unit.createMany({
-    data: [{ name: 'g' }, { name: 'x' }, { name: 'tbsp' }, { name: 'tsp' }, { name: 'ml' }]
+    data: [{ name: 'g' }, { name: 'x' }, { name: 'tbsp' }, { name: 'tsp' }, { name: 'ml' }],
+    skipDuplicates: true
   });
 
   for (const recipe of data) {
     const result = await prisma.recipe.create({
       data: {
+        id: recipe.id,
         name: recipe.name,
         description: recipe.description,
         servings: recipe.servings,
-        slug: recipe.slug,
         time: recipe.time,
         ingredients: {
           create: recipe.ingredients.map(({ amount, unit, ingredient }) => ({

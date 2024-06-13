@@ -7,11 +7,11 @@
   export let data: PageData;
   export let form: ActionData;
 
-  let recipes = data.recipes.map(({ slug, name, servings }) => ({
-    slug,
+  let recipes = data.recipes.map(({ id, name, servings }) => ({
+    id,
     name,
     servings,
-    number: form?.data.get(slug) ?? 0
+    number: form?.data.get(id) ?? 0
   }));
 
   $: console.log(recipes);
@@ -34,7 +34,7 @@
     {#each selectedRecipes as recipe}
       <article class="recipe-row">
         <span>{recipe.name}</span>
-        <Counter name={recipe.slug} bind:number={recipe.number} />
+        <Counter name={recipe.id} bind:number={recipe.number} />
       </article>
     {:else}
       <p>No recipes selected</p>

@@ -20,11 +20,11 @@ export function getAllIngredients() {
   });
 }
 
-export function getRecipe(slug: string) {
+export function getRecipe(id: string) {
   return prisma.recipe.findFirst({
     where: {
-      slug: {
-        equals: slug
+      id: {
+        equals: id
       }
     },
     include: {
@@ -42,10 +42,10 @@ export function getRecipe(slug: string) {
 export function createRecipe(recipe: Recipe) {
   return prisma.recipe.create({
     data: {
+      id: createSlug(recipe.title),
       name: recipe.title,
       description: recipe.description,
       servings: 0,
-      slug: createSlug(recipe.title),
       time: 0,
       ingredients: {
         create: recipe.ingredient.map((ingredient, i) => ({
@@ -78,10 +78,10 @@ export function createList(listSubmission: ListSubmission) {
   return prisma.list.create({
     data: {
       meals: {
-        create: Object.entries(listSubmission).map(([slug, servings]) => ({
+        create: Object.entries(listSubmission).map(([id, servings]) => ({
           recipe: {
             connect: {
-              slug
+              id
             }
           },
           servings
