@@ -1,26 +1,10 @@
+<!-- 
+  Input modifier idea adapted from https://github.com/sveltejs/svelte/issues/3937#issuecomment-1924718545
+-->
+
 <script lang="ts">
   export let name: string;
   export let number: number;
-
-  let stringyNumber = '';
-
-  const updateString = (x: number) => {
-    // console.log('Input', x);
-    stringyNumber = String(x);
-  };
-
-  const updateNumber = (x: string) => {
-    // console.log('Output', x);
-    if (x.replace(/\D/g, '') !== '') {
-      number = parseInt(x);
-    }
-  };
-
-  // $: console.log("Before", number, stringyNumber);
-  $: stringyNumber = stringyNumber.replace(/\D/g, '')
-  $: updateString(number);
-  $: updateNumber(stringyNumber);
-  // $: console.log("After", number, stringyNumber);
 </script>
 
 <!-- svelte-ignore a11y-no-redundant-roles -->
@@ -33,7 +17,20 @@
   >
     -
   </button>
-  <input {name} type="text" inputmode="numeric" bind:value={stringyNumber} />
+  <input
+    {name}
+    type="text"
+    inputmode="numeric"
+    value={String(number)}
+    on:focus={(event) => event.currentTarget.select()}
+    on:input={(event) => (event.currentTarget.value = event.currentTarget.value.replace(/\D/g, ''))}
+    on:change={(event) => {
+      const parsed = parseInt(event.currentTarget.value);
+      if (!isNaN(parsed)) {
+        number = parsed;
+      }
+    }}
+  />
   <button
     type="button"
     on:click|preventDefault={() => {
@@ -56,8 +53,8 @@
   }
 
   input[type='text'] {
-      max-width: 3em;
-      text-align: center;
-      --pico-form-element-spacing-horizontal: 0rem;
-    }
+    max-width: 3em;
+    text-align: center;
+    --pico-form-element-spacing-horizontal: 0rem;
+  }
 </style>
