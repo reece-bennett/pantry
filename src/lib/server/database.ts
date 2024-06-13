@@ -43,6 +43,14 @@ export function getList(id: number) {
   });
 }
 
+export function deleteList(id: number) {
+  return prisma.list.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export function getRecipe(id: string) {
   return prisma.recipe.findUnique({
     where: {

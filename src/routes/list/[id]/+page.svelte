@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   export let data: PageData;
 
@@ -66,5 +67,10 @@
         </li>
       {/each}
     </ul>
+
+    <form method="post" use:enhance>
+      <input type="hidden" name="id" value={data.list.id} />
+      <button>Delete list</button>
+    </form>
   </section>
 </main>
