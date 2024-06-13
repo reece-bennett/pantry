@@ -44,25 +44,27 @@
     <a href="/list">Back</a>
   </p>
 
-  <h1>List {data.list.id}</h1>
+  <section>
+    <h1>List {data.list.id}</h1>
 
-  <h2>Recipes</h2>
+    <h2>Recipes</h2>
 
-  <ul>
-    {#each data.list.meals as meal}
-      <li>{meal.servings} x <a href="/recipe/{meal.recipeId}">{meal.recipe.name}</a></li>
-    {/each}
-  </ul>
+    <ul>
+      {#each data.list.meals as meal}
+        <li>{meal.servings} x <a href="/recipe/{meal.recipeId}">{meal.recipe.name}</a></li>
+      {/each}
+    </ul>
 
-  <h2>Ingredients</h2>
+    <h2>Ingredients</h2>
 
-  <ul>
-    {#each ingredients as { amount, name, unit }}
-      <li>
-        {amount}
-        {#if unit !== 'x'}{unit}{/if}
-        {name}
-      </li>
-    {/each}
-  </ul>
+    <ul>
+      {#each ingredients as { amount, name, unit }}
+        <li>
+          {amount}
+          {#if unit !== 'x'}{unit}{/if}
+          {name}
+        </li>
+      {/each}
+    </ul>
+  </section>
 </main>

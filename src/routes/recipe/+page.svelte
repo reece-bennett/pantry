@@ -8,23 +8,19 @@
     <a href="/">Back</a>
   </p>
 
-  <h1>Recipes</h1>
+  <section>
+    <h1>Recipes</h1>
 
-  <p>
-    <a href="/recipe/new">Add recipe</a>
-  </p>
+    <p>
+      <a href="/recipe/new">Add recipe</a>
+    </p>
 
-  <ul>
-    {#each data.recipes as { id, name }}
-      <li>
-        <a href="/recipe/{id}">{name}</a>
-      </li>
-    {/each}
-  </ul>
+    <ul>
+      {#each data.recipes as { id, name }}
+        <li>
+          <a href="/recipe/{id}">{name}</a>
+        </li>
+      {/each}
+    </ul>
+  </section>
 </main>
-
-<style>
-  h1 {
-    margin-top: 0;
-  }
-</style>

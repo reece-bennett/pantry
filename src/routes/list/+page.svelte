@@ -8,23 +8,19 @@
     <a href="/">Back</a>
   </p>
 
-  <h1>Lists</h1>
+  <section>
+    <h1>Lists</h1>
 
-  <p>
-    <a href="/list/new">Create list</a>
-  </p>
+    <p>
+      <a href="/list/new">Create list</a>
+    </p>
 
-  <ul>
-    {#each data.lists as { id }}
-      <li>
-        <a href="/list/{id}">{id}</a>
-      </li>
-    {/each}
-  </ul>
+    <ul>
+      {#each data.lists as { id }}
+        <li>
+          <a href="/list/{id}">{id}</a>
+        </li>
+      {/each}
+    </ul>
+  </section>
 </main>
-
-<style>
-  h1 {
-    margin-top: 0;
-  }
-</style>

@@ -24,72 +24,56 @@
     <a href="/list">Back</a>
   </p>
 
-  <h1>Create list</h1>
+  <section>
+    <h1>Create list</h1>
 
-  <div role="search">
-    <input type="search" placeholder="Search" />
-  </div>
-
-  <form method="post" use:enhance>
-    {#each selectedRecipes as recipe}
-      <article class="recipe-row">
-        <span>{recipe.name}</span>
-        <Counter name={recipe.id} bind:number={recipe.number} />
-      </article>
-    {:else}
-      <p>No recipes selected</p>
-    {/each}
-
-    <hr />
-
-    {#each unselectedRecipes as recipe}
-      <article class="recipe-row">
-        <span>{recipe.name}</span>
-        <button
-          type="button"
-          on:click={() => {
-            recipe.number = recipe.servings;
-            recipes = recipes;
-          }}
-        >
-          +
-        </button>
-      </article>
-    {/each}
-
-    <div>
-      <button type="submit">Submit</button>
-      <a href="/recipe">Cancel</a>
+    <div role="search">
+      <input type="search" placeholder="Search" />
     </div>
-  </form>
 
-  <style>
-    h1 {
-      margin-top: 0;
-    }
+    <form method="post" use:enhance>
+      {#each selectedRecipes as recipe}
+        <article class="recipe-row">
+          <span>{recipe.name}</span>
+          <Counter name={recipe.id} bind:number={recipe.number} />
+        </article>
+      {:else}
+        <p>No recipes selected</p>
+      {/each}
 
-    .error {
-      color: var(--pico-del-color);
-    }
+      <hr />
 
-    .recipe-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+      {#each unselectedRecipes as recipe}
+        <article class="recipe-row">
+          <span>{recipe.name}</span>
+          <button
+            type="button"
+            on:click={() => {
+              recipe.number = recipe.servings;
+              recipes = recipes;
+            }}
+          >
+            +
+          </button>
+        </article>
+      {/each}
 
-    .recipe-row-controls {
-      display: flex;
-      align-items: center;
-      gap: 1em;
-    }
-
-    .recipe-row button {
-      margin-bottom: 0;
-    }
-
-    .recipe-row input[type='checkbox'] {
-      margin: 0;
-    }
-  </style>
+      <div>
+        <button type="submit">Submit</button>
+        <a href="/recipe">Cancel</a>
+      </div>
+    </form>
+  </section>
 </main>
+
+<style>
+  .recipe-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .recipe-row button {
+    margin-bottom: 0;
+  }
+</style>

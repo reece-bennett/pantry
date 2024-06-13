@@ -48,124 +48,118 @@
     <a href="/recipe">Back</a>
   </p>
 
-  <h1>Create new recipe</h1>
+  <section>
+    <h1>Create new recipe</h1>
 
-  <form method="post" use:enhance>
-    <label for="title">Title</label>
-    <input
-      id="title"
-      name="title"
-      type="text"
-      value={form?.data.title ?? ''}
-      aria-invalid={form?.errors?.title ? 'true' : undefined}
-    />
-    {#if form?.errors?.title}
-      <small>{form.errors.title}</small>
-    {/if}
-
-    <label for="description">Description</label>
-    <textarea
-      id="description"
-      name="description"
-      value={form?.data.description ?? ''}
-      aria-invalid={form?.errors?.description ? 'true' : undefined}
-    ></textarea>
-    {#if form?.errors?.description}
-      <small>{form.errors.description}</small>
-    {/if}
-
-    <h2>Ingredients</h2>
-    {#each ingredients as ingredient, i}
-      <!-- svelte-ignore a11y-no-redundant-roles -->
-      <fieldset role="group">
-        <input
-          name="amount"
-          class="amount"
-          type="text"
-          inputmode="numeric"
-          bind:value={ingredient.amount}
-          aria-invalid={form?.errors?.[`amount${i}`] ? 'true' : undefined}
-        />
-
-        <select
-          name="unit"
-          class="unit"
-          bind:value={ingredient.unit}
-          aria-invalid={form?.errors?.[`unit${i}`] ? 'true' : undefined}
-        >
-          {#each data.units as unit}
-            <option value={unit.name}>{unit.name}</option>
-          {/each}
-        </select>
-
-        <AutoComplete
-          name="ingredient"
-          items={data.ingredients}
-          bind:value={ingredient.ingredient}
-          labelFieldName="name"
-          valueFieldName="name"
-          noInputStyles
-          hideArrow
-          create="true"
-          createText="New ingredient will be created."
-        />
-
-        <button
-          type="button"
-          on:click|preventDefault={() => removeIngredient(i)}
-          disabled={ingredients.length < 2}
-        >
-          ❌
-        </button>
-      </fieldset>
-    {/each}
-    <button type="button" on:click|preventDefault={addIngredient}>Add</button>
-
-    <h2>Steps</h2>
-    {#each steps as step, i}
-      <!-- svelte-ignore a11y-no-redundant-roles -->
-      <fieldset role="group">
-        <textarea
-          name="step"
-          bind:value={step}
-          aria-invalid={form?.errors?.['step' + i] ? 'true' : undefined}
-        ></textarea>
-        <button
-          type="button"
-          on:click|preventDefault={() => removeStep(i)}
-          disabled={steps.length < 2}
-        >
-          ❌
-        </button>
-      </fieldset>
-      {#if form?.errors?.['step' + i]}
-        <small class="error">{form.errors['step' + i]}</small>
+    <form method="post" use:enhance>
+      <label for="title">Title</label>
+      <input
+        id="title"
+        name="title"
+        type="text"
+        value={form?.data.title ?? ''}
+        aria-invalid={form?.errors?.title ? 'true' : undefined}
+      />
+      {#if form?.errors?.title}
+        <small>{form.errors.title}</small>
       {/if}
-    {/each}
-    <button type="button" on:click|preventDefault={addStep}>Add</button>
 
-    <div>
-      <button type="submit">Submit</button>
-      <a href="/recipe">Cancel</a>
-    </div>
-  </form>
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        value={form?.data.description ?? ''}
+        aria-invalid={form?.errors?.description ? 'true' : undefined}
+      ></textarea>
+      {#if form?.errors?.description}
+        <small>{form.errors.description}</small>
+      {/if}
 
-  <style>
-    h1 {
-      margin-top: 0;
-    }
+      <h2>Ingredients</h2>
+      {#each ingredients as ingredient, i}
+        <!-- svelte-ignore a11y-no-redundant-roles -->
+        <fieldset role="group">
+          <input
+            name="amount"
+            class="amount"
+            type="text"
+            inputmode="numeric"
+            bind:value={ingredient.amount}
+            aria-invalid={form?.errors?.[`amount${i}`] ? 'true' : undefined}
+          />
 
-    input.amount,
-    select.unit {
-      width: 25%;
-    }
+          <select
+            name="unit"
+            class="unit"
+            bind:value={ingredient.unit}
+            aria-invalid={form?.errors?.[`unit${i}`] ? 'true' : undefined}
+          >
+            {#each data.units as unit}
+              <option value={unit.name}>{unit.name}</option>
+            {/each}
+          </select>
 
-    [data-svelte-typeahead] {
-      width: 50%;
-    }
+          <AutoComplete
+            name="ingredient"
+            items={data.ingredients}
+            bind:value={ingredient.ingredient}
+            labelFieldName="name"
+            valueFieldName="name"
+            noInputStyles
+            hideArrow
+            create="true"
+            createText="New ingredient will be created."
+          />
 
-    .error {
-      color: var(--pico-del-color);
-    }
-  </style>
+          <button
+            type="button"
+            on:click|preventDefault={() => removeIngredient(i)}
+            disabled={ingredients.length < 2}
+          >
+            ❌
+          </button>
+        </fieldset>
+      {/each}
+      <button type="button" on:click|preventDefault={addIngredient}>Add</button>
+
+      <h2>Steps</h2>
+      {#each steps as step, i}
+        <!-- svelte-ignore a11y-no-redundant-roles -->
+        <fieldset role="group">
+          <textarea
+            name="step"
+            bind:value={step}
+            aria-invalid={form?.errors?.['step' + i] ? 'true' : undefined}
+          ></textarea>
+          <button
+            type="button"
+            on:click|preventDefault={() => removeStep(i)}
+            disabled={steps.length < 2}
+          >
+            ❌
+          </button>
+        </fieldset>
+        {#if form?.errors?.['step' + i]}
+          <small class="error">{form.errors['step' + i]}</small>
+        {/if}
+      {/each}
+      <button type="button" on:click|preventDefault={addStep}>Add</button>
+
+      <div>
+        <button type="submit">Submit</button>
+        <a href="/recipe">Cancel</a>
+      </div>
+    </form>
+  </section>
 </main>
+
+<style>
+  input.amount,
+  select.unit {
+    width: 25%;
+  }
+
+  .error {
+    color: var(--pico-del-color);
+  }
+</style>
