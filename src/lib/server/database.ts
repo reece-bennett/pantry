@@ -103,6 +103,14 @@ export function createRecipe(recipe: Recipe) {
   });
 }
 
+export function deleteRecipe(id: string) {
+  return prisma.recipe.delete({
+    where: {
+      id
+    }
+  });
+}
+
 export function createList(listSubmission: ListSubmission) {
   return prisma.list.create({
     data: {

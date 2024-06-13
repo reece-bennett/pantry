@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   export let data: PageData;
 </script>
@@ -38,5 +39,10 @@
         </li>
       {/each}
     </ol>
+
+    <form method="post" use:enhance>
+      <input type="hidden" name="id" value={data.recipe.id} />
+      <button>Delete recipe</button>
+    </form>
   </section>
 </main>
