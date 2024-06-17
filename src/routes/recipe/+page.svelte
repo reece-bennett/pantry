@@ -12,7 +12,7 @@
     <h1>Recipes</h1>
 
     <p>
-      <a href="/recipe/new">Add recipe</a>
+      <a href="/recipe/new">Create recipe</a>
     </p>
 
     <ul>

@@ -1,3 +1,5 @@
+import { parse } from 'node-html-parser';
+
 const apiUrl = 'https://production-api.gousto.co.uk/cmsreadbroker/v1/recipe';
 
 type Ingredient = {
@@ -13,6 +15,7 @@ type Recipe = {
   servings: number;
   time: number;
   ingredients: Ingredient[];
+  steps: string[];
 };
 
 async function parseGousto(url: string): Promise<Recipe> {
@@ -28,9 +31,16 @@ async function parseGousto(url: string): Promise<Recipe> {
     time: data.prep_times[portionsString],
     ingredients: data.ingredients.map((ingredient: { label: string }) =>
       parseIngredient(ingredient.label)
+    ),
+    steps: data.cooking_instructions.map(
+      (cookingInstruction: { instruction: string }) => parse(cookingInstruction.instruction).structuredText
     )
   };
 }
+
+const unitMap = new Map([
+  ['pcs', 'x']
+]);
 
 function parseIngredient(original: string): Ingredient {
   original = original.replace('x0', '');
@@ -40,7 +50,7 @@ function parseIngredient(original: string): Ingredient {
   if (result) {
     return {
       amount: convertAmountToNumber(result[1]),
-      unit: result[2],
+      unit: unitMap.get(result[2]) ?? result[2],
       name: original.replace(result[0], '').trim(),
       original
     };

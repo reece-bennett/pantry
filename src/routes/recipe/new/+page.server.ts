@@ -3,6 +3,8 @@ import { createRecipe, getAllIngredients, getAllUnits } from '$lib/server/databa
 import { fail, redirect } from '@sveltejs/kit';
 import { z, type ZodIssue } from 'zod';
 import type { PageServerLoad } from './$types';
+import parseGousto from '$lib/server/scraper/gousto';
+import { zfd } from 'zod-form-data';
 
 export const load = (async () => {
   return {
@@ -11,18 +13,82 @@ export const load = (async () => {
   };
 }) satisfies PageServerLoad;
 
+const schema = zfd.formData({
+  url: zfd.text()
+});
+
+// interface Data {
+//   url: string | undefined;
+//   title: string | undefined;
+//   description: string | undefined;
+//   amounts: string[];
+//   units: string[];
+//   ingredients: string[];
+//   steps: string[];
+// }
+
+// interface OkResponse {
+//   success: true;
+//   data: Data;
+// }
+
+// interface ErrorResponse {
+//   success: false;
+//   data: Data;
+//   errors: {
+//     [x: string]: string;
+//   };
+// }
+
+// type FormResponse = OkResponse | ErrorResponse;
+
 export const actions = {
-  default: async ({ request }) => {
+  url: async ({ request }) => {
+    const formData = await request.formData();
+    const result = schema.safeParse(formData);
+
+    if (!result.success) {
+      return fail(400, {
+        success: false,
+        data: createData(formData),
+        errors: parseErrors(result)
+      });
+    }
+
+    if (result.data.url.includes('gousto.co.uk')) {
+      const recipe = await parseGousto(result.data.url);
+      return {
+        success: true,
+        data: {
+          url: result.data.url,
+          title: recipe.name,
+          description: recipe.description,
+          amounts: recipe.ingredients.map((ingredient) => ingredient.amount.toString()),
+          units: recipe.ingredients.map((ingredient) => ingredient.unit),
+          ingredients: recipe.ingredients.map((ingredient) => ingredient.name),
+          steps: recipe.steps
+        }
+      };
+    } else {
+      return fail(400, {
+        success: false,
+        data: createData(formData),
+        errors: {
+          url: 'Site not supported'
+        } as { [x: string]: string }
+      });
+    }
+  },
+  submit: async ({ request }) => {
     const formData = await request.formData();
     const result = recipeSchema.safeParse(formData);
 
     if (!result.success) {
-      const returnThing = {
+      return fail(400, {
         success: false,
         data: createData(formData),
         errors: parseErrors(result)
-      };
-      return fail(400, returnThing);
+      });
     }
 
     await createRecipe(result.data);
@@ -47,6 +113,7 @@ function parseErrors(result: z.SafeParseError<FormData>) {
 
 function createData(formData: FormData) {
   return {
+    url: formData.get('url')?.toString(),
     title: formData.get('title')?.toString(),
     description: formData.get('description')?.toString(),
     amounts: formData.getAll('amount').map((x) => x.toString()),
