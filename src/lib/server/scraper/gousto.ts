@@ -22,7 +22,7 @@ async function parseGousto(url: string): Promise<Recipe> {
   const slug = url.split('/').at(-1);
   const response = await fetch(`${apiUrl}/${slug}`);
   const data = (await response.json()).data.entry;
-  console.log(data);
+  // console.log(data);
   const portionsString = Object.keys(data.prep_times).sort()[0];
   return {
     name: data.title,

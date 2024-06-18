@@ -17,31 +17,6 @@ const schema = zfd.formData({
   url: zfd.text()
 });
 
-// interface Data {
-//   url: string | undefined;
-//   title: string | undefined;
-//   description: string | undefined;
-//   amounts: string[];
-//   units: string[];
-//   ingredients: string[];
-//   steps: string[];
-// }
-
-// interface OkResponse {
-//   success: true;
-//   data: Data;
-// }
-
-// interface ErrorResponse {
-//   success: false;
-//   data: Data;
-//   errors: {
-//     [x: string]: string;
-//   };
-// }
-
-// type FormResponse = OkResponse | ErrorResponse;
-
 export const actions = {
   url: async ({ request }) => {
     const formData = await request.formData();
@@ -63,6 +38,8 @@ export const actions = {
           url: result.data.url,
           title: recipe.name,
           description: recipe.description,
+          servings: recipe.servings,
+          time: recipe.time,
           amounts: recipe.ingredients.map((ingredient) => ingredient.amount.toString()),
           units: recipe.ingredients.map((ingredient) => ingredient.unit),
           ingredients: recipe.ingredients.map((ingredient) => ingredient.name),
@@ -116,6 +93,8 @@ function createData(formData: FormData) {
     url: formData.get('url')?.toString(),
     title: formData.get('title')?.toString(),
     description: formData.get('description')?.toString(),
+    servings: formData.get('servings')?.toString(),
+    time: formData.get('time')?.toString(),
     amounts: formData.getAll('amount').map((x) => x.toString()),
     units: formData.getAll('unit').map((x) => x.toString()),
     ingredients: formData.getAll('ingredient').map((x) => x.toString()),
