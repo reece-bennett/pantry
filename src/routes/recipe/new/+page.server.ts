@@ -1,15 +1,18 @@
 import { recipeSchema } from '$lib/schemas/recipe';
 import { createRecipe, getAllIngredients, getAllUnits } from '$lib/server/database';
-import { fail, redirect } from '@sveltejs/kit';
+import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { z, type ZodIssue } from 'zod';
 import type { PageServerLoad } from './$types';
 import parseGousto from '$lib/server/scraper/gousto';
 import { zfd } from 'zod-form-data';
 
-export const load = (async () => {
+export const load = (async ({ url }) => {
+  const importUrl = url.searchParams.get('import');
   return {
     units: await getAllUnits(),
-    ingredients: await getAllIngredients()
+    ingredients: await getAllIngredients(),
+    importUrl,
+    recipe: importUrl ? await parseGousto(importUrl) : null
   };
 }) satisfies PageServerLoad;
 
@@ -30,23 +33,7 @@ export const actions = {
       });
     }
 
-    if (result.data.url.includes('gousto.co.uk')) {
-      const recipe = await parseGousto(result.data.url);
-      return {
-        success: true,
-        data: {
-          url: result.data.url,
-          title: recipe.name,
-          description: recipe.description,
-          servings: recipe.servings,
-          time: recipe.time,
-          amounts: recipe.ingredients.map((ingredient) => ingredient.amount.toString()),
-          units: recipe.ingredients.map((ingredient) => ingredient.unit),
-          ingredients: recipe.ingredients.map((ingredient) => ingredient.name),
-          steps: recipe.steps
-        }
-      };
-    } else {
+    if (!result.data.url.includes('gousto.co.uk')) {
       return fail(400, {
         success: false,
         data: createData(formData),
@@ -55,6 +42,8 @@ export const actions = {
         } as { [x: string]: string }
       });
     }
+
+    redirect(303, `?import=${result.data.url}`);
   },
   submit: async ({ request }) => {
     const formData = await request.formData();
@@ -72,7 +61,7 @@ export const actions = {
 
     redirect(303, `/recipe/${recipe?.id}`);
   }
-};
+} satisfies Actions;
 
 function parseErrors(result: z.SafeParseError<FormData>) {
   const flattened = result.error.flatten((issue: ZodIssue) => ({
@@ -98,6 +87,7 @@ function createData(formData: FormData) {
     amounts: formData.getAll('amount').map((x) => x.toString()),
     units: formData.getAll('unit').map((x) => x.toString()),
     ingredients: formData.getAll('ingredient').map((x) => x.toString()),
+    originals: formData.getAll('original').map((x) => x.toString()),
     steps: formData.getAll('step').map((x) => x.toString())
   };
 }

@@ -33,47 +33,46 @@ async function parseGousto(url: string): Promise<Recipe> {
       parseIngredient(ingredient.label)
     ),
     steps: data.cooking_instructions.map(
-      (cookingInstruction: { instruction: string }) => parse(cookingInstruction.instruction).structuredText
+      (cookingInstruction: { instruction: string }) =>
+        parse(cookingInstruction.instruction).structuredText
     )
   };
 }
 
-const unitMap = new Map([
-  ['pcs', 'x']
-]);
+const unitMap = new Map([['pcs', 'x']]);
 
 function parseIngredient(original: string): Ingredient {
-  original = original.replace('x0', '');
+  const preProcessed = original.replace('x0', '');
 
   // Parse with amount and unit
-  const result = original.match(/\(?([0-9./]+)\s?(g|kg|ml|l|tbsp|tsp|x|pcs)\)?(?:\s|$)/i);
+  const result = preProcessed.match(/\(?([0-9./]+)\s?(g|kg|ml|l|tbsp|tsp|x|pcs)\)?(?:\s|$)/i);
   if (result) {
     return {
       amount: convertAmountToNumber(result[1]),
       unit: unitMap.get(result[2]) ?? result[2],
-      name: original.replace(result[0], '').trim(),
+      name: preProcessed.replace(result[0], '').trim(),
       original
     };
   }
 
   // Parse with just amount
-  const result2 = original.match(/(?:\s|^)\(?([0-9./]+)\s?/);
+  const result2 = preProcessed.match(/(?:\s|^)\(?([0-9./]+)\s?/);
   if (result2) {
     return {
       amount: convertAmountToNumber(result2[1]),
       unit: 'x',
-      name: original.replace(result2[0], '').trim(),
+      name: preProcessed.replace(result2[0], '').trim(),
       original
     };
   }
 
   // Parse x<amount>
-  const result3 = original.match(/(?:\s|^)\(?x([0-9./]+)(?:\s|$)/i);
+  const result3 = preProcessed.match(/(?:\s|^)\(?x([0-9./]+)(?:\s|$)/i);
   if (result3) {
     return {
       amount: convertAmountToNumber(result3[1]),
       unit: 'x',
-      name: original.replace(result3[0], '').trim(),
+      name: preProcessed.replace(result3[0], '').trim(),
       original
     };
   }

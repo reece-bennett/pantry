@@ -6,30 +6,33 @@
   export let data: PageData;
   export let form: ActionData;
 
-  let ingredientRows = [
-    {
-      amount: '',
-      unit: 'g',
-      ingredient: ''
-    }
-  ];
+  // Needed as update loop? was being caused in the unit select
+  let units = data.units;
 
-  function updateIngredientRows(form: ActionData) {
+  let ingredientRows = [{ amount: '', unit: 'g', ingredient: '', original: '' }];
+  $: initialiseIngredientRows(data, form);
+
+  function initialiseIngredientRows(data: PageData, form: ActionData) {
+    console.log('initialiseIngredientRows');
     if (form) {
       ingredientRows = form.data.amounts.map((amount, i) => ({
         amount,
         unit: form.data.units[i],
-        ingredient: form.data.ingredients[i]
+        ingredient: form.data.ingredients[i],
+        original: form.data.originals[i]
+      }));
+    } else if (data.recipe) {
+      ingredientRows = data.recipe.ingredients.map((ingredient) => ({
+        amount: ingredient.amount.toString(),
+        unit: ingredient.unit,
+        ingredient: ingredient.name,
+        original: ingredient.original
       }));
     }
   }
 
-  $: updateIngredientRows(form);
-
-  $: errors = form?.errors;
-
   function addIngredient() {
-    ingredientRows = [...ingredientRows, { ingredient: '', unit: 'g', amount: '' }];
+    ingredientRows = [...ingredientRows, { ingredient: '', unit: 'g', amount: '', original: '' }];
   }
 
   function removeIngredient(i: number) {
@@ -52,7 +55,19 @@
     }
   }
 
-  $: stepRows = form ? form.data.steps : [''];
+  $: errors = form?.errors;
+
+  let stepRows = [''];
+  $: initialiseStepRows(data, form);
+
+  function initialiseStepRows(data: PageData, form: ActionData) {
+    console.log('initialiseStepRows');
+    if (form) {
+      stepRows = form.data.steps;
+    } else if (data.recipe) {
+      stepRows = data.recipe.steps;
+    }
+  }
 
   function addStep() {
     stepRows = [...stepRows, ''];
@@ -62,9 +77,9 @@
     stepRows = stepRows.toSpliced(i, 1);
   }
 
-  // $: console.log(ingredientRows);
-  // $: console.log(data);
-  // $: console.log(form);
+  $: console.log('data', data);
+  $: console.log('form', form);
+  $: console.log('ingredientRows', ingredientRows);
 </script>
 
 <main class="container">
@@ -79,13 +94,7 @@
       <label for="url">Import from a URL</label>
       <!-- svelte-ignore a11y-no-redundant-roles -->
       <fieldset role="group">
-        <input
-          id="url"
-          name="url"
-          type="url"
-          placeholder="Recipe URL"
-          value={form?.data?.url ?? ''}
-        />
+        <input id="url" name="url" type="url" placeholder="Recipe URL" value={data.importUrl} />
         <button type="submit">Submit</button>
       </fieldset>
     </form>
@@ -98,7 +107,7 @@
         id="title"
         name="title"
         type="text"
-        value={form?.data.title ?? ''}
+        value={form?.data.title ?? data.recipe?.name ?? ''}
         aria-invalid={errors?.title ? 'true' : undefined}
       />
       {#if errors?.title}
@@ -109,7 +118,7 @@
       <textarea
         id="description"
         name="description"
-        value={form?.data.description ?? ''}
+        value={form?.data.description ?? data.recipe?.description ?? ''}
         aria-invalid={errors?.description ? 'true' : undefined}
       ></textarea>
       {#if errors?.description}
@@ -121,7 +130,7 @@
         name="servings"
         type="text"
         inputmode="numeric"
-        value={form?.data.servings ?? ''}
+        value={form?.data.servings ?? data.recipe?.servings ?? ''}
         aria-invalid={errors?.servings ? 'true' : undefined}
       />
       {#if errors?.servings}
@@ -133,7 +142,7 @@
         name="time"
         type="text"
         inputmode="numeric"
-        value={form?.data.time ?? ''}
+        value={form?.data.time ?? data.recipe?.time ?? ''}
         aria-invalid={errors?.time ? 'true' : undefined}
       />
       {#if errors?.time}
@@ -160,7 +169,7 @@
             bind:value={ingredient.unit}
             aria-invalid={errors?.[`unit${i}`] ? 'true' : undefined}
           >
-            {#each data.units as unit}
+            {#each units as unit}
               <option value={unit.name}>{unit.name}</option>
             {/each}
           </select>
@@ -173,6 +182,7 @@
             bind:value={ingredient.ingredient}
             aria-invalid={errors?.[`ingredient${i}`] ? 'true' : undefined}
           />
+          <input name="original" type="hidden" value={ingredient.original} />
 
           <datalist id="ingredient-list">
             {#each data.ingredients as ingredient}
@@ -188,15 +198,18 @@
             ❌
           </button>
         </fieldset>
-        <div class="ingredient-error-container">
+        <div class="message-container">
+          {#if ingredient.original}
+            <small>Original text: {ingredient.original}</small>
+          {/if}
           {#if errors?.[`amount${i}`]}
-            <small class="error ingredient-error">Amount {errors[`amount${i}`]}</small>
+            <small class="error">Amount {errors[`amount${i}`]}</small>
           {/if}
           {#if errors?.[`unit${i}`]}
-            <small class="error ingredient-error">Unit {errors[`unit${i}`]}</small>
+            <small class="error">Unit {errors[`unit${i}`]}</small>
           {/if}
           {#if errors?.[`ingredient${i}`]}
-            <small class="error ingredient-error">Ingredient {errors[`ingredient${i}`]}</small>
+            <small class="error">Ingredient {errors[`ingredient${i}`]}</small>
           {/if}
         </div>
       {/each}
@@ -244,16 +257,16 @@
     color: var(--pico-del-color);
   }
 
-  .ingredient-error {
+  .message-container {
+    margin-bottom: var(--pico-spacing);
+  }
+
+  .message-container small {
     display: block;
     margin-bottom: 0;
   }
 
-  .ingredient-error-container {
-    margin-bottom: var(--pico-spacing);
-  }
-
-  .ingredient-error:first-child {
+  .message-container small:first-child {
     margin-top: calc(var(--pico-spacing) * -0.75);
   }
 
