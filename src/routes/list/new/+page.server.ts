@@ -24,9 +24,9 @@ export const actions = {
       return fail(400, returnThing);
     }
 
-    await createList(result.data);
+    const list = await createList(result.data);
 
-    redirect(303, '/list');
+    redirect(303, `/list/${list.id}`);
   }
 };
 

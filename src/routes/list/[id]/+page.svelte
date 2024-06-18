@@ -1,6 +1,8 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import type { PageData } from './$types';
+  import Modal from '$lib/components/Modal.svelte';
+
   export let data: PageData;
 
   type Ingredient = {
@@ -38,6 +40,8 @@
       }
       return 0;
     });
+
+  let modal: Modal;
 </script>
 
 <main class="container">
@@ -68,9 +72,18 @@
       {/each}
     </ul>
 
-    <form method="post" use:enhance>
+    <form id="form" method="post" use:enhance>
       <input type="hidden" name="id" value={data.list.id} />
-      <button>Delete list</button>
+      <button on:click|preventDefault={() => modal.showModal()}>Delete list</button>
     </form>
   </section>
 </main>
+
+<Modal bind:this={modal}>
+  <h2>Delete 'List {data.list.id}'?</h2>
+  <p>This action cannot be undone!</p>
+  <footer>
+    <button class="secondary" on:click={() => modal.close()}>Cancel</button>
+    <button form="form" on:click={() => modal.close()}>Confirm</button>
+  </footer>
+</Modal>

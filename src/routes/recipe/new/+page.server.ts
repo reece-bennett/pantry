@@ -68,9 +68,9 @@ export const actions = {
       });
     }
 
-    await createRecipe(result.data);
+    const recipe = await createRecipe(result.data);
 
-    redirect(303, '/recipe');
+    redirect(303, `/recipe/${recipe?.id}`);
   }
 };
 
