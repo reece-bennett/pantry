@@ -10,9 +10,9 @@
   let units = data.units;
 
   let ingredientRows = [{ amount: '', unit: 'g', ingredient: '', original: '' }];
-  $: initialiseIngredientRows(data, form);
+  $: initialiseIngredientRows(form);
 
-  function initialiseIngredientRows(data: PageData, form: ActionData) {
+  function initialiseIngredientRows(form: ActionData) {
     console.log('initialiseIngredientRows');
     if (form) {
       ingredientRows = form.data.amounts.map((amount, i) => ({
@@ -20,13 +20,6 @@
         unit: form.data.units[i],
         ingredient: form.data.ingredients[i],
         original: form.data.originals[i]
-      }));
-    } else if (data.recipe) {
-      ingredientRows = data.recipe.ingredients.map((ingredient) => ({
-        amount: ingredient.amount.toString(),
-        unit: ingredient.unit,
-        ingredient: ingredient.name,
-        original: ingredient.original
       }));
     }
   }
@@ -57,17 +50,7 @@
 
   $: errors = form?.errors;
 
-  let stepRows = [''];
-  $: initialiseStepRows(data, form);
-
-  function initialiseStepRows(data: PageData, form: ActionData) {
-    console.log('initialiseStepRows');
-    if (form) {
-      stepRows = form.data.steps;
-    } else if (data.recipe) {
-      stepRows = data.recipe.steps;
-    }
-  }
+  $: stepRows = form ? form.data.steps : [''];
 
   function addStep() {
     stepRows = [...stepRows, ''];
@@ -80,6 +63,7 @@
   $: console.log('data', data);
   $: console.log('form', form);
   $: console.log('ingredientRows', ingredientRows);
+  $: console.log('stepRows', stepRows);
 </script>
 
 <main class="container">
@@ -94,7 +78,13 @@
       <label for="url">Import from a URL</label>
       <!-- svelte-ignore a11y-no-redundant-roles -->
       <fieldset role="group">
-        <input id="url" name="url" type="url" placeholder="Recipe URL" value={data.importUrl} />
+        <input
+          id="url"
+          name="url"
+          type="url"
+          placeholder="Recipe URL"
+          value={form?.data.url ?? ''}
+        />
         <button type="submit">Submit</button>
       </fieldset>
     </form>
@@ -102,12 +92,14 @@
     <hr />
 
     <form method="post" action="?/submit" use:enhance>
+      <input type="hidden" name="url" value={form?.data.url ?? ''} />
+
       <label for="title">Title</label>
       <input
         id="title"
         name="title"
         type="text"
-        value={form?.data.title ?? data.recipe?.name ?? ''}
+        value={form?.data.title ?? ''}
         aria-invalid={errors?.title ? 'true' : undefined}
       />
       {#if errors?.title}
@@ -118,7 +110,7 @@
       <textarea
         id="description"
         name="description"
-        value={form?.data.description ?? data.recipe?.description ?? ''}
+        value={form?.data.description ?? ''}
         aria-invalid={errors?.description ? 'true' : undefined}
       ></textarea>
       {#if errors?.description}
@@ -130,7 +122,7 @@
         name="servings"
         type="text"
         inputmode="numeric"
-        value={form?.data.servings ?? data.recipe?.servings ?? ''}
+        value={form?.data.servings ?? ''}
         aria-invalid={errors?.servings ? 'true' : undefined}
       />
       {#if errors?.servings}
@@ -142,7 +134,7 @@
         name="time"
         type="text"
         inputmode="numeric"
-        value={form?.data.time ?? data.recipe?.time ?? ''}
+        value={form?.data.time ?? ''}
         aria-invalid={errors?.time ? 'true' : undefined}
       />
       {#if errors?.time}

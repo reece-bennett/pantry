@@ -6,13 +6,10 @@ import type { PageServerLoad } from './$types';
 import parseGousto from '$lib/server/scraper/gousto';
 import { zfd } from 'zod-form-data';
 
-export const load = (async ({ url }) => {
-  const importUrl = url.searchParams.get('import');
+export const load = (async () => {
   return {
     units: await getAllUnits(),
-    ingredients: await getAllIngredients(),
-    importUrl,
-    recipe: importUrl ? await parseGousto(importUrl) : null
+    ingredients: await getAllIngredients()
   };
 }) satisfies PageServerLoad;
 
@@ -43,7 +40,22 @@ export const actions = {
       });
     }
 
-    redirect(303, `?import=${result.data.url}`);
+    const recipe = await parseGousto(result.data.url);
+    return {
+      success: true,
+      data: {
+        url: result.data.url,
+        title: recipe.name,
+        description: recipe.description,
+        servings: recipe.servings,
+        time: recipe.time,
+        amounts: recipe.ingredients.map((ingredient) => ingredient.amount.toString()),
+        units: recipe.ingredients.map((ingredient) => ingredient.unit),
+        ingredients: recipe.ingredients.map((ingredient) => ingredient.name),
+        originals: recipe.ingredients.map((ingredient) => ingredient.original),
+        steps: recipe.steps
+      }
+    }
   },
   submit: async ({ request }) => {
     const formData = await request.formData();
