@@ -1,6 +1,7 @@
 import { recipeSchema } from '$lib/schemas/recipe';
 import { createRecipe, getAllIngredients, getAllUnits } from '$lib/server/database';
 import parseGousto from '$lib/server/scraper/gousto';
+import { Prisma } from '@prisma/client';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { z, type ZodIssue } from 'zod';
 import { zfd } from 'zod-form-data';
@@ -69,9 +70,25 @@ export const actions = {
       });
     }
 
-    const recipe = await createRecipe(result.data);
-
-    redirect(303, `/recipe/${recipe?.id}`);
+    try {
+      const recipe = await createRecipe(result.data);
+      redirect(303, `/recipe/${recipe?.id}`);
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002' &&
+        e.meta?.modelName === 'Recipe'
+      ) {
+        return fail(400, {
+          success: false,
+          data: createData(formData),
+          errors: {
+            title: 'There is already a recipe with this title'
+          } as { [x: string]: string }
+        });
+      }
+      throw e;
+    }
   }
 } satisfies Actions;
 
