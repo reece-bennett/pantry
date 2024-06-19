@@ -1,15 +1,15 @@
 import { recipeSchema } from '$lib/schemas/recipe';
 import { createRecipe, getAllIngredients, getAllUnits } from '$lib/server/database';
+import parseGousto from '$lib/server/scraper/gousto';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
 import { z, type ZodIssue } from 'zod';
-import type { PageServerLoad } from './$types';
-import parseGousto from '$lib/server/scraper/gousto';
 import { zfd } from 'zod-form-data';
+import type { PageServerLoad } from './$types';
 
 export const load = (async () => {
   return {
-    units: await getAllUnits(),
-    ingredients: await getAllIngredients()
+    units: (await getAllUnits()).map((unit) => unit.name),
+    ingredients: (await getAllIngredients()).map((ingredient) => ingredient.name)
   };
 }) satisfies PageServerLoad;
 
@@ -55,7 +55,7 @@ export const actions = {
         originals: recipe.ingredients.map((ingredient) => ingredient.original),
         steps: recipe.steps
       }
-    }
+    };
   },
   submit: async ({ request }) => {
     const formData = await request.formData();

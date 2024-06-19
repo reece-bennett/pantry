@@ -1,15 +1,12 @@
 <script lang="ts">
-  import type { ActionData } from './$types.js';
   import { enhance } from '$app/forms';
-  import type { PageData } from './$types.js';
+  import type { ActionData, PageData } from './$types.js';
+  import IngredientRow from './IngredientRow.svelte';
 
   export let data: PageData;
   export let form: ActionData;
 
-  // Needed as update loop? was being caused in the unit select
-  let units = data.units;
-
-  let ingredientRows = [{ amount: '', unit: 'g', ingredient: '', original: '' }];
+  let ingredientRows = [{ amount: '', unit: data.units[0], ingredient: '', original: '' }];
   $: initialiseIngredientRows(form);
 
   function initialiseIngredientRows(form: ActionData) {
@@ -25,7 +22,10 @@
   }
 
   function addIngredient() {
-    ingredientRows = [...ingredientRows, { ingredient: '', unit: 'g', amount: '', original: '' }];
+    ingredientRows = [
+      ...ingredientRows,
+      { ingredient: '', unit: data.units[0], amount: '', original: '' }
+    ];
   }
 
   function removeIngredient(i: number) {
@@ -48,7 +48,7 @@
     }
   }
 
-  $: errors = form?.errors;
+  $: errors = (form?.errors ?? []) as { [x: string]: string };
 
   $: stepRows = form ? form.data.steps : [''];
 
@@ -142,68 +142,19 @@
       {/if}
 
       <h2>Ingredients</h2>
-      {#each ingredientRows as ingredient, i}
-        <!-- svelte-ignore a11y-no-redundant-roles -->
-        <fieldset role="group">
-          <input
-            name="amount"
-            class="amount"
-            type="text"
-            inputmode="numeric"
-            bind:value={ingredient.amount}
-            aria-invalid={errors?.[`amount${i}`] ? 'true' : undefined}
-            autocomplete="off"
-          />
-
-          <select
-            name="unit"
-            class="unit"
-            bind:value={ingredient.unit}
-            aria-invalid={errors?.[`unit${i}`] ? 'true' : undefined}
-          >
-            {#each units as unit}
-              <option value={unit.name}>{unit.name}</option>
-            {/each}
-          </select>
-
-          <input
-            name="ingredient"
-            type="text"
-            list="ingredient-list"
-            autocomplete="off"
-            bind:value={ingredient.ingredient}
-            aria-invalid={errors?.[`ingredient${i}`] ? 'true' : undefined}
-          />
-          <input name="original" type="hidden" value={ingredient.original} />
-
-          <datalist id="ingredient-list">
-            {#each data.ingredients as ingredient}
-              <option value={ingredient.name}></option>
-            {/each}
-          </datalist>
-
-          <button
-            type="button"
-            on:click|preventDefault={() => removeIngredient(i)}
-            disabled={ingredientRows.length < 2}
-          >
-            ❌
-          </button>
-        </fieldset>
-        <div class="message-container">
-          {#if ingredient.original}
-            <small>Original text: {ingredient.original}</small>
-          {/if}
-          {#if errors?.[`amount${i}`]}
-            <small class="error">Amount {errors[`amount${i}`]}</small>
-          {/if}
-          {#if errors?.[`unit${i}`]}
-            <small class="error">Unit {errors[`unit${i}`]}</small>
-          {/if}
-          {#if errors?.[`ingredient${i}`]}
-            <small class="error">Ingredient {errors[`ingredient${i}`]}</small>
-          {/if}
-        </div>
+      {#each ingredientRows as ingredient, index}
+        <IngredientRow
+          units={data.units}
+          ingredients={data.ingredients}
+          {errors}
+          {index}
+          enableRemove={ingredientRows.length > 1}
+          remove={() => removeIngredient(index)}
+          bind:amount={ingredient.amount}
+          bind:unit={ingredient.unit}
+          bind:ingredient={ingredient.ingredient}
+          original={ingredient.original}
+        />
       {/each}
       <button type="button" on:click|preventDefault={addIngredient}>Add</button>
 
@@ -240,26 +191,8 @@
 </main>
 
 <style>
-  input.amount,
-  select.unit {
-    width: 25%;
-  }
-
   .error {
     color: var(--pico-del-color);
-  }
-
-  .message-container {
-    margin-bottom: var(--pico-spacing);
-  }
-
-  .message-container small {
-    display: block;
-    margin-bottom: 0;
-  }
-
-  .message-container small:first-child {
-    margin-top: calc(var(--pico-spacing) * -0.75);
   }
 
   .bottom-error {
