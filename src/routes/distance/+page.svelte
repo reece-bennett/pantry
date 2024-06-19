@@ -8,7 +8,8 @@
 
   const fuse = new Fuse(data.ingredients, {
     includeScore: true,
-    threshold: 0.3
+    threshold: 0.6, // default 0.6
+    distance: 100 // default 100
   });
 
   const uf = new uFuzzy({

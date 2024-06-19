@@ -10,7 +10,7 @@
   $: initialiseIngredientRows(form);
 
   function initialiseIngredientRows(form: ActionData) {
-    console.log('initialiseIngredientRows');
+    // console.log('initialiseIngredientRows');
     if (form) {
       ingredientRows = form.data.amounts.map((amount, i) => ({
         amount,
@@ -48,7 +48,7 @@
     }
   }
 
-  $: errors = (form?.errors ?? []) as { [x: string]: string };
+  $: errors = form?.errors;
 
   $: stepRows = form ? form.data.steps : [''];
 
@@ -60,10 +60,10 @@
     stepRows = stepRows.toSpliced(i, 1);
   }
 
-  $: console.log('data', data);
-  $: console.log('form', form);
-  $: console.log('ingredientRows', ingredientRows);
-  $: console.log('stepRows', stepRows);
+  // $: console.log('data', data);
+  // $: console.log('form', form);
+  // $: console.log('ingredientRows', ingredientRows);
+  // $: console.log('stepRows', stepRows);
 </script>
 
 <main class="container">
