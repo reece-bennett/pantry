@@ -31,8 +31,8 @@ export const recipeSchema = zfd.formData({
       });
     })
   ),
-  original: zfd.repeatable(z.array(zfd.text())),
-  step: zfd.repeatable(z.array(zfd.text()))
+  step: zfd.repeatable(z.array(zfd.text())),
+  stepId: zfd.repeatable(z.array(zfd.numeric(z.number().optional())))
 });
 
 export type Recipe = z.infer<typeof recipeSchema>;

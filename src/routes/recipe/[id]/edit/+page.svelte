@@ -1,31 +1,32 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import type { ActionData, PageData } from './$types.js';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
+  import type { ActionData, PageData } from './$types';
 
   export let data: PageData;
   export let form: ActionData;
 
-  let ingredientRows = [{ amount: '', unit: data.units[0], ingredient: '', original: '' }];
-  $: initialiseIngredientRows(form);
+  let ingredientRows = [{ amount: '', unit: data.units[0], ingredient: '' }];
+  $: initialiseIngredientRows(form, data);
 
-  function initialiseIngredientRows(form: ActionData) {
-    // console.log('initialiseIngredientRows');
+  function initialiseIngredientRows(form: ActionData, data: PageData) {
     if (form) {
       ingredientRows = form.data.amounts.map((amount, i) => ({
         amount,
         unit: form.data.units[i],
-        ingredient: form.data.ingredients[i],
-        original: form.data.originals[i]
+        ingredient: form.data.ingredients[i]
+      }));
+    } else if (data) {
+      ingredientRows = data.recipe.ingredients.map(({ amount, unitName, ingredientName }) => ({
+        amount: String(amount),
+        unit: unitName,
+        ingredient: ingredientName
       }));
     }
   }
 
   function addIngredient() {
-    ingredientRows = [
-      ...ingredientRows,
-      { ingredient: '', unit: data.units[0], amount: '', original: '' }
-    ];
+    ingredientRows = [...ingredientRows, { ingredient: '', unit: data.units[0], amount: '' }];
   }
 
   function removeIngredient(i: number) {
@@ -50,10 +51,19 @@
 
   $: errors = form?.errors;
 
-  $: stepRows = form ? form.data.steps : [''];
+  let stepRows = [{ id: '', content: '' }];
+  $: initialiseStepRows(form, data);
+  
+  function initialiseStepRows(form: ActionData, data: PageData) {
+    if (form) {
+      stepRows = form.data.steps.map((step, i) => ({ id: form.data.stepIds[i], content: step }));
+    } else if (data) {
+      stepRows = data.recipe.steps.map(({ id, content }) => ({ id: String(id), content }));
+    }
+  }
 
   function addStep() {
-    stepRows = [...stepRows, ''];
+    stepRows = [...stepRows, { id: '', content: '' }];
   }
 
   function removeStep(i: number) {
@@ -68,77 +78,63 @@
 
 <main class="container">
   <p>
-    <a href="/recipe">Back</a>
+    <a href="/recipe/{data.recipe.id}">Back</a>
   </p>
 
   <section>
-    <h1>Create new recipe</h1>
+    <hgroup>
+      <h1>Editing recipe</h1>
+      <p>{data.recipe.name}</p>
+    </hgroup>
 
-    <form method="post" action="?/url" use:enhance>
-      <label for="url">Import from a URL</label>
-      <!-- svelte-ignore a11y-no-redundant-roles -->
-      <fieldset role="group">
-        <input
-          id="url"
-          name="url"
-          type="url"
-          placeholder="Recipe URL"
-          value={form?.data.url ?? ''}
-        />
-        <button type="submit">Submit</button>
-      </fieldset>
-    </form>
-
-    <hr />
-
-    <form method="post" action="?/submit" use:enhance>
-      <input type="hidden" name="url" value={form?.data.url ?? ''} />
-
+    <form method="post" use:enhance>
       <label for="title">Title</label>
       <input
         id="title"
         name="title"
         type="text"
-        value={form?.data.title ?? ''}
-        aria-invalid={errors?.title ? 'true' : undefined}
+        value={form?.data.title ?? data.recipe.name}
+        aria-invalid={form?.errors.title ? 'true' : undefined}
       />
-      {#if errors?.title}
-        <small>{errors.title}</small>
+      {#if form?.errors.title}
+        <small>{form?.errors.title}</small>
       {/if}
 
       <label for="description">Description</label>
       <textarea
         id="description"
         name="description"
-        value={form?.data.description ?? ''}
-        aria-invalid={errors?.description ? 'true' : undefined}
+        value={form?.data.description ?? data.recipe.description}
+        aria-invalid={form?.errors.description ? 'true' : undefined}
       ></textarea>
-      {#if errors?.description}
-        <small>{errors.description}</small>
+      {#if form?.errors.description}
+        <small>{form?.errors.description}</small>
       {/if}
 
       <label for="servings">Servings</label>
       <input
+        id="servings"
         name="servings"
         type="text"
         inputmode="numeric"
-        value={form?.data.servings ?? ''}
-        aria-invalid={errors?.servings ? 'true' : undefined}
+        value={form?.data.servings ?? data.recipe.servings}
+        aria-invalid={form?.errors.servings ? 'true' : undefined}
       />
-      {#if errors?.servings}
-        <small>{errors.servings}</small>
+      {#if form?.errors.servings}
+        <small>{form?.errors.servings}</small>
       {/if}
 
-      <label for="servings">Time taken (mins)</label>
+      <label for="time">Time taken (mins)</label>
       <input
+        id="time"
         name="time"
         type="text"
         inputmode="numeric"
-        value={form?.data.time ?? ''}
-        aria-invalid={errors?.time ? 'true' : undefined}
+        value={form?.data.time ?? data.recipe.time}
+        aria-invalid={form?.errors.time ? 'true' : undefined}
       />
-      {#if errors?.time}
-        <small>{errors.time}</small>
+      {#if form?.errors.time}
+        <small>{form?.errors.time}</small>
       {/if}
 
       <h2>Ingredients</h2>
@@ -153,18 +149,18 @@
           bind:amount={ingredient.amount}
           bind:unit={ingredient.unit}
           bind:ingredient={ingredient.ingredient}
-          original={ingredient.original}
         />
       {/each}
       <button type="button" on:click|preventDefault={addIngredient}>Add</button>
 
       <h2>Steps</h2>
       {#each stepRows as step, i}
+        <input name="stepId" type="hidden" value={step.id} />
         <!-- svelte-ignore a11y-no-redundant-roles -->
         <fieldset role="group">
           <textarea
             name="step"
-            bind:value={step}
+            bind:value={step.content}
             aria-invalid={errors?.['step' + i] ? 'true' : undefined}
           ></textarea>
           <button
@@ -182,21 +178,7 @@
       <button type="button" on:click|preventDefault={addStep}>Add</button>
 
       <button type="submit">Submit</button>
-      {#if errors}
-        <small class="error bottom-error">There are errors</small>
-      {/if}
-      <a href="/recipe">Cancel</a>
+      <a href="/recipe/{data.recipe.id}">Cancel</a>
     </form>
   </section>
 </main>
-
-<style>
-  .error {
-    color: var(--pico-del-color);
-  }
-
-  .bottom-error {
-    display: block;
-    margin-top: calc(var(--pico-spacing) * -0.75);
-  }
-</style>

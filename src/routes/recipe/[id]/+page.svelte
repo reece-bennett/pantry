@@ -44,6 +44,10 @@
       {/each}
     </ol>
 
+    <p>
+      <a href="/recipe/{data.recipe.id}/edit">Edit recipe</a>
+    </p>
+
     <form id="form" method="post" use:enhance>
       <input type="hidden" name="id" value={data.recipe.id} />
       <button on:click|preventDefault={() => modal.showModal()}>Delete recipe</button>
