@@ -1,7 +1,7 @@
-import { deleteList, getList } from '$lib/server/database';
+import { deleteListRequestSchema } from '$lib/schemas/deleteListRequest';
+import { deleteList, getList } from '$lib/server/database/list';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { deleteListRequestSchema } from '$lib/schemas/deleteListRequest';
 
 export const load = (async ({ params }) => {
   if (isNaN(Number(params.id))) {

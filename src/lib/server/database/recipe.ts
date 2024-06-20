@@ -1,101 +1,8 @@
-import type { ListSubmission } from '$lib/schemas/listSubmission';
 import type { Recipe } from '$lib/schemas/recipe';
-import prisma from './prisma';
-
-const slugRegex = /\W/gm;
+import prisma from '../prisma';
 
 export function getAllRecipes() {
   return prisma.recipe.findMany();
-}
-
-export function getAllUnits() {
-  return prisma.unit.findMany();
-}
-
-export function getAllIngredients() {
-  return prisma.ingredient.findMany({
-    orderBy: {
-      name: 'asc'
-    }
-  });
-}
-
-export function updateIngredients(changedIngredients: [string, string][]) {
-  return prisma.$transaction(
-    changedIngredients.map(([oldName, newName]) =>
-      prisma.ingredient.update({
-        where: { name: oldName },
-        data: { name: newName }
-      })
-    )
-  );
-}
-
-export function getAllLists() {
-  return prisma.list.findMany();
-}
-
-export function getList(id: number) {
-  return prisma.list.findUnique({
-    where: {
-      id
-    },
-    include: {
-      meals: {
-        include: {
-          recipe: {
-            include: {
-              ingredients: true
-            }
-          }
-        }
-      }
-    }
-  });
-}
-
-export function updateList(id: number, listSubmission: ListSubmission) {
-  return prisma.list.update({
-    where: {
-      id
-    },
-    data: {
-      meals: {
-        upsert: Object.entries(listSubmission).map(([recipeId, servings]) => ({
-          where: {
-            recipeId_listId: {
-              listId: id,
-              recipeId
-            }
-          },
-          update: {
-            servings
-          },
-          create: {
-            recipe: {
-              connect: {
-                id: recipeId
-              }
-            },
-            servings
-          }
-        })),
-        deleteMany: {
-          recipeId: {
-            notIn: Object.keys(listSubmission)
-          }
-        }
-      }
-    }
-  });
-}
-
-export function deleteList(id: number) {
-  return prisma.list.delete({
-    where: {
-      id
-    }
-  });
 }
 
 export function getRecipe(id: string) {
@@ -153,7 +60,6 @@ export async function createRecipe(recipe: Recipe) {
     }
   });
 }
-
 export async function updateRecipe(id: string, recipe: Recipe) {
   return prisma.$transaction(async (tx) => {
     // Delete deleted steps
@@ -242,23 +148,6 @@ export function deleteRecipe(id: string) {
   });
 }
 
-export function createList(listSubmission: ListSubmission) {
-  return prisma.list.create({
-    data: {
-      meals: {
-        create: Object.entries(listSubmission).map(([id, servings]) => ({
-          recipe: {
-            connect: {
-              id
-            }
-          },
-          servings
-        }))
-      }
-    }
-  });
-}
-
 function createSlug(title: string): string {
-  return title.toLowerCase().replace(slugRegex, '-');
+  return title.toLowerCase().replace(/\W/gm, '-');
 }

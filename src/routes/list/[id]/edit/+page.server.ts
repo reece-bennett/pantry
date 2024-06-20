@@ -1,5 +1,6 @@
 import { listSubmissionSchema } from '$lib/schemas/listSubmission';
-import { getAllRecipes, getList, updateList } from '$lib/server/database';
+import { getList, updateList } from '$lib/server/database/list';
+import { getAllRecipes } from '$lib/server/database/recipe';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { z, ZodIssue } from 'zod';
 import type { PageServerLoad } from './$types';

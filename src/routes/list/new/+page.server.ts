@@ -1,8 +1,9 @@
-import { createList, getAllRecipes } from '$lib/server/database';
+import { listSubmissionSchema } from '$lib/schemas/listSubmission';
+import { createList } from '$lib/server/database/list';
+import { getAllRecipes } from '$lib/server/database/recipe';
 import { fail, redirect } from '@sveltejs/kit';
 import { z, type ZodIssue } from 'zod';
 import type { PageServerLoad } from './$types';
-import { listSubmissionSchema } from '$lib/schemas/listSubmission';
 
 export const load = (async () => {
   return {

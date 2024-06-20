@@ -1,7 +1,7 @@
-import { deleteRecipe, getRecipe } from '$lib/server/database';
+import { deleteRecipeRequestSchema } from '$lib/schemas/deleteRecipeRequest';
+import { deleteRecipe, getRecipe } from '$lib/server/database/recipe';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { deleteRecipeRequestSchema } from '$lib/schemas/deleteRecipeRequest';
 
 export const load = (async ({ params }) => {
   const recipe = await getRecipe(params.id);

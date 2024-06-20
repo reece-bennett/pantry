@@ -1,5 +1,7 @@
 import { recipeSchema } from '$lib/schemas/recipe';
-import { createRecipe, getAllIngredients, getAllUnits } from '$lib/server/database';
+import { getAllIngredients } from '$lib/server/database/ingredient';
+import { createRecipe } from '$lib/server/database/recipe';
+import { getAllUnits } from '$lib/server/database/unit';
 import parseGousto from '$lib/server/scraper/gousto';
 import { Prisma } from '@prisma/client';
 import { fail, redirect, type Actions } from '@sveltejs/kit';

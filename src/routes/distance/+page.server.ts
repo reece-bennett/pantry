@@ -1,4 +1,4 @@
-import { getAllIngredients } from '$lib/server/database';
+import { getAllIngredients } from '$lib/server/database/ingredient';
 import type { PageServerLoad } from './$types';
 
 export const load = (async () => {

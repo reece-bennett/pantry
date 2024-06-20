@@ -1,5 +1,7 @@
 import { recipeSchema } from '$lib/schemas/recipe';
-import { getAllIngredients, getAllUnits, getRecipe, updateRecipe } from '$lib/server/database';
+import { getAllIngredients } from '$lib/server/database/ingredient';
+import { getRecipe, updateRecipe } from '$lib/server/database/recipe';
+import { getAllUnits } from '$lib/server/database/unit';
 import { Prisma } from '@prisma/client';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { ZodIssue, z } from 'zod';
