@@ -1,5 +1,6 @@
 <script lang="ts">
   import { browser } from '$app/environment';
+  import { onDestroy } from 'svelte';
 
   const IS_OPEN_CLASS = 'modal-is-open';
   const OPENING_CLASS = 'modal-is-opening';
@@ -9,10 +10,11 @@
 
   export let open = false;
 
+  let html: HTMLElement;
   let dialog: HTMLDialogElement;
+  let closing = false;
 
   export function showModal() {
-    const html = document.documentElement;
     const scrollbarWidth = getScrollbarWidth();
     if (scrollbarWidth) {
       html.style.setProperty(SCROLLBAR_WIDTH_CSS_VAR, `${scrollbarWidth}px`);
@@ -26,12 +28,14 @@
   }
 
   export function close() {
-    const html = document.documentElement;
     html.classList.add(CLOSING_CLASS);
+    closing = true;
     setTimeout(() => {
-      html.classList.remove(CLOSING_CLASS, IS_OPEN_CLASS);
-      html.style.removeProperty(SCROLLBAR_WIDTH_CSS_VAR);
-      dialog.close();
+      if (closing) {
+        html.classList.remove(CLOSING_CLASS, IS_OPEN_CLASS);
+        html.style.removeProperty(SCROLLBAR_WIDTH_CSS_VAR);
+        dialog.close();
+      }
     }, ANIMATION_DURATION_MS);
   }
 
@@ -40,19 +44,35 @@
   }
 
   if (browser) {
+    html = document.documentElement;
     document.addEventListener('keydown', (event) => {
-      // By default (in Chrome) ESC closes the modal without triggering the animation
+      // Fix ESC in Chrome closing the modal without triggering the animation
       if (open && event.key === 'Escape') {
         event.preventDefault();
         close();
       }
     });
   }
+
+  onDestroy(() => {
+    if (closing) {
+      html.classList.remove(CLOSING_CLASS, IS_OPEN_CLASS);
+      html.style.removeProperty(SCROLLBAR_WIDTH_CSS_VAR);
+      closing = false;
+    }
+  });
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<dialog bind:this={dialog} on:close={() => (open = false)} on:click|self={() => close()}>
+<dialog
+  bind:this={dialog}
+  on:close={() => {
+    open = false;
+    closing = false;
+  }}
+  on:click|self={() => close()}
+>
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <article on:click|stopPropagation>
