@@ -1,8 +1,7 @@
 <script lang="ts">
-  import type { ActionData } from './$types.js';
   import { enhance } from '$app/forms';
-  import type { PageData } from './$types.js';
   import Counter from '$lib/components/Counter.svelte';
+  import type { ActionData, PageData } from './$types';
 
   export let data: PageData;
   export let form: ActionData;
@@ -11,20 +10,21 @@
     id,
     name,
     servings,
-    number: form?.data.get(id) ?? 0
+    number:
+      form?.data.get(id) ?? data.list.meals.find((meal) => meal.recipeId === id)?.servings ?? 0
   }));
-  
+
   $: selectedRecipes = recipes.filter((recipe) => recipe.number > 0);
   $: unselectedRecipes = recipes.filter((recipe) => recipe.number === 0);
 </script>
 
 <main class="container">
   <p>
-    <a href="/list">Back</a>
+    <a href="/list/{data.list.id}">Back</a>
   </p>
 
   <section>
-    <h1>Create list</h1>
+    <h1>Editing list</h1>
 
     <div role="search">
       <input type="search" placeholder="Search" />

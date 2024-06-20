@@ -72,6 +72,10 @@
       {/each}
     </ul>
 
+    <p>
+      <a href="/list/{data.list.id}/edit">Edit list</a>
+    </p>
+
     <form id="form" method="post" use:enhance>
       <input type="hidden" name="id" value={data.list.id} />
       <button on:click|preventDefault={() => modal.showModal()}>Delete list</button>

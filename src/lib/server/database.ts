@@ -43,6 +43,42 @@ export function getList(id: number) {
   });
 }
 
+export function updateList(id: number, listSubmission: ListSubmission) {
+  return prisma.list.update({
+    where: {
+      id
+    },
+    data: {
+      meals: {
+        upsert: Object.entries(listSubmission).map(([recipeId, servings]) => ({
+          where: {
+            recipeId_listId: {
+              listId: id,
+              recipeId
+            }
+          },
+          update: {
+            servings
+          },
+          create: {
+            recipe: {
+              connect: {
+                id: recipeId
+              }
+            },
+            servings
+          }
+        })),
+        deleteMany: {
+          recipeId: {
+            notIn: Object.keys(listSubmission)
+          }
+        }
+      }
+    }
+  });
+}
+
 export function deleteList(id: number) {
   return prisma.list.delete({
     where: {
