@@ -2,10 +2,10 @@ import { recipeSchema } from '$lib/schemas/recipe';
 import { getAllIngredients } from '$lib/server/database/ingredient';
 import { createRecipe } from '$lib/server/database/recipe';
 import { getAllUnits } from '$lib/server/database/unit';
+import { parseErrors } from '$lib/server/helpers';
 import parseGousto from '$lib/server/scraper/gousto';
 import { Prisma } from '@prisma/client';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
-import { z, type ZodIssue } from 'zod';
 import { zfd } from 'zod-form-data';
 import type { PageServerLoad } from './$types';
 
@@ -93,20 +93,6 @@ export const actions = {
     }
   }
 } satisfies Actions;
-
-function parseErrors(result: z.SafeParseError<FormData>) {
-  const flattened = result.error.flatten((issue: ZodIssue) => ({
-    message: issue.message,
-    path: issue.path
-  })).fieldErrors;
-  const errors: { [x: string]: string } = {};
-  for (const [k, v] of Object.entries(flattened)) {
-    for (const { message, path } of v) {
-      errors[k + (path[1] ?? '')] = message;
-    }
-  }
-  return errors;
-}
 
 function createData(formData: FormData) {
   return {

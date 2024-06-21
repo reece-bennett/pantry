@@ -1,8 +1,8 @@
+import { parseErrors } from '$lib/server/helpers';
+import parseGousto from '$lib/server/scraper/gousto';
+import { fail } from '@sveltejs/kit';
 import { zfd } from 'zod-form-data';
 import type { PageServerLoad } from './$types';
-import type { ZodIssue, z } from 'zod';
-import { fail } from '@sveltejs/kit';
-import parseGousto from '$lib/server/scraper/gousto';
 
 export const load = (async () => {
   return {};
@@ -47,17 +47,3 @@ export const actions = {
 const schema = zfd.formData({
   url: zfd.text()
 });
-
-function parseErrors(result: z.SafeParseError<FormData>) {
-  const flattened = result.error.flatten((issue: ZodIssue) => ({
-    message: issue.message,
-    path: issue.path
-  })).fieldErrors;
-  const errors: { [x: string]: string } = {};
-  for (const [k, v] of Object.entries(flattened)) {
-    for (const { message, path } of v) {
-      errors[k + (path[1] ?? '')] = message;
-    }
-  }
-  return errors;
-}

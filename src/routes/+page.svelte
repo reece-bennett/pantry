@@ -8,5 +8,8 @@
     <li>
       <a href="/list">Lists</a>
     </li>
+    <li>
+      <a href="/ingredient">Ingredients</a>
+    </li>
   </ul>
 </main>

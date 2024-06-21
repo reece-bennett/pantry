@@ -8,11 +8,13 @@
   const SCROLLBAR_WIDTH_CSS_VAR = '--pico-scrollbar-width';
   const ANIMATION_DURATION_MS = 400;
 
-  export let open = false;
-
   let html: HTMLElement;
   let dialog: HTMLDialogElement;
   let closing = false;
+
+  export function isOpen() {
+    return dialog.open;
+  }
 
   export function showModal() {
     const scrollbarWidth = getScrollbarWidth();
@@ -24,7 +26,6 @@
       html.classList.remove(OPENING_CLASS);
     }, ANIMATION_DURATION_MS);
     dialog.showModal();
-    open = true;
   }
 
   export function close() {
@@ -45,13 +46,15 @@
 
   if (browser) {
     html = document.documentElement;
-    document.addEventListener('keydown', (event) => {
-      // Fix ESC in Chrome closing the modal without triggering the animation
-      if (open && event.key === 'Escape') {
-        event.preventDefault();
-        close();
-      }
-    });
+    document.addEventListener('keydown', handleEscapeClose);
+  }
+
+  function handleEscapeClose(event: KeyboardEvent) {
+    // Fix ESC in Chrome closing the modal without triggering the animation
+    if (dialog.open && event.key === 'Escape') {
+      event.preventDefault();
+      close();
+    }
   }
 
   onDestroy(() => {
@@ -59,6 +62,9 @@
       html.classList.remove(CLOSING_CLASS, IS_OPEN_CLASS);
       html.style.removeProperty(SCROLLBAR_WIDTH_CSS_VAR);
       closing = false;
+    }
+    if (browser) {
+      document.removeEventListener('keydown', handleEscapeClose);
     }
   });
 </script>
@@ -68,7 +74,6 @@
 <dialog
   bind:this={dialog}
   on:close={() => {
-    open = false;
     closing = false;
   }}
   on:click|self={() => close()}

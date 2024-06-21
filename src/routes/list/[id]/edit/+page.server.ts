@@ -1,8 +1,8 @@
 import { listSubmissionSchema } from '$lib/schemas/listSubmission';
 import { getList, updateList } from '$lib/server/database/list';
 import { getAllRecipes } from '$lib/server/database/recipe';
+import { parseErrors } from '$lib/server/helpers';
 import { error, fail, redirect } from '@sveltejs/kit';
-import type { z, ZodIssue } from 'zod';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ params }) => {
@@ -15,7 +15,7 @@ export const load = (async ({ params }) => {
   if (!list) {
     throw error(404);
   }
-  
+
   return {
     recipes: await getAllRecipes(),
     list
@@ -41,20 +41,6 @@ export const actions = {
     redirect(303, `/list/${params.id}`);
   }
 };
-
-function parseErrors(result: z.SafeParseError<FormData>) {
-  const flattened = result.error.flatten((issue: ZodIssue) => ({
-    message: issue.message,
-    path: issue.path
-  })).fieldErrors;
-  const errors: { [x: string]: string } = {};
-  for (const [k, v] of Object.entries(flattened)) {
-    for (const { message, path } of v) {
-      errors[k + (path[1] ?? '')] = message;
-    }
-  }
-  return errors;
-}
 
 function createData(formData: FormData) {
   return new Map(
