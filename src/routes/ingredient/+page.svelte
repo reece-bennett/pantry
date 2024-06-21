@@ -10,10 +10,14 @@
   let filterString = '';
   $: searchResults = fuzzySearch(data.ingredients, filterString);
 
+  let showOnlySimilar = false;
+
   $: ingredients = data.ingredients.map((ingredient) => ({
     original: ingredient,
     name: ingredient,
-    shown: searchResults.length === 0 || searchResults.includes(ingredient)
+    shown:
+      (searchResults.length === 0 || searchResults.includes(ingredient)) &&
+      (!showOnlySimilar || similarIngredients.includes(ingredient))
   }));
 
   let modal: Modal;
@@ -25,9 +29,14 @@
     }
   }
 
-  $: console.log('data', data);
-  $: console.log('form', form);
-  $: console.log('ingredients', ingredients);
+  $: similarIngredients = data.ingredients.flatMap((ingredient) => {
+    const result = fuzzySearch(data.ingredients, ingredient);
+    if (result.length > 1) {
+      return [...result, ingredient];
+    } else {
+      return [];
+    }
+  });
 </script>
 
 <main class="container">
@@ -38,8 +47,12 @@
   <section>
     <h1>Ingredients</h1>
 
-    <div role="search">
+    <div class="search-container">
       <input type="search" placeholder="Filter" bind:value={filterString} />
+      <fieldset>
+        <input type="checkbox" id="simlar" bind:checked={showOnlySimilar} />
+        <label for="similar">Similar</label>
+      </fieldset>
     </div>
 
     <form
@@ -103,6 +116,20 @@
 <style>
   .container {
     max-width: 700px;
+  }
+
+  .search-container {
+    display: flex;
+    gap: var(--pico-spacing);
+    align-items: center;
+  }
+
+  .search-container input[type='search'] {
+    flex-grow: 1;
+  }
+
+  .search-container fieldset {
+    max-width: fit-content;
   }
 
   article {
