@@ -35,7 +35,7 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
-## Docker
+## Docker
 
 Build the SvelteKit image with `docker build -t pantry-app .` then start with `docker compose up -d`.
 
