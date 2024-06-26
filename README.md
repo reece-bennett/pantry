@@ -4,7 +4,7 @@ A recipe storage and shopping list planning app.
 
 ## Setup
 
-Install app dependencies with `npm install` and start the database with `docker compose up`.
+Install app dependencies with `npm install` and start the database with `docker compose up db -d`.
 
 Create a `.env` file in the root directory with the contents:
 
@@ -12,7 +12,7 @@ Create a `.env` file in the root directory with the contents:
 DATABASE_URL="postgresql://postgres:example@localhost:5432/postgres?schema=public"
 ```
 
-Run `npx prisma migrate dev` to apply the database migrations and seed the database with example data.
+Run `npx prisma migrate dev` and `npx prisma db seed` to apply the database migrations, generate the client, and seed the database with example data.
 
 ## Developing
 
@@ -34,6 +34,10 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
+
+## Docker
+
+Build the SvelteKit image with `docker build -t pantry-app .` then start with `docker compose up -d`.
 
 ## Database
 

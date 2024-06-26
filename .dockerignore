@@ -1,0 +1,12 @@
+node_modules
+.git
+.git*
+.env
+.eslint*
+.prettier*
+README.md
+Dockerfile*
+compose.yml
+.svelte-kit
+build
+postgres-data

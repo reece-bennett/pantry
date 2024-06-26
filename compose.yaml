@@ -1,10 +1,32 @@
 services:
   db:
+    container_name: db
     image: postgres
     restart: unless-stopped
     # set shared memory limit when using docker-compose
     shm_size: 128mb
     environment:
+      POSTGRES_USER: postgres
+      PGUSER: postgres
       POSTGRES_PASSWORD: example
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
     ports:
       - 5432:5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+  app:
+    container_name: app
+    image: pantry-app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://postgres:example@db:5432/postgres?schema=public
+      ORIGIN: http://localhost:3000
+    ports:
+      - 3000:3000
