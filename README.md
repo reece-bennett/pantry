@@ -37,7 +37,9 @@ You can preview the production build with `npm run preview`.
 
 ## Docker
 
-Build the SvelteKit image with `docker build -t pantry-app .` then start with `docker compose up -d`.
+Build the SvelteKit image with `docker build -t reecebennett/pantry-app .` then start with `docker compose up -d`.
+
+To build a multi-platform image enable `Use containerd for pulling and storing images` in the Docker Desktop settings then run `docker buildx build --platform linux/amd64,linux/arm64 -t reecebennett/pantry-app:latest --push .`.
 
 ## Database
 
