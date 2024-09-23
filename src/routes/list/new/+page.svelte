@@ -80,7 +80,7 @@
 
       <div>
         <button type="submit">Submit</button>
-        <a href="/recipe">Cancel</a>
+        <a href="/list">Cancel</a>
       </div>
     </form>
   </section>
