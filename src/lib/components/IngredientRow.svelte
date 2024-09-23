@@ -35,7 +35,7 @@
     name="amount"
     class="amount"
     type="text"
-    inputmode="numeric"
+    inputmode="decimal"
     bind:value={amount}
     aria-invalid={errors?.[`amount${index}`] ? 'true' : undefined}
     autocomplete="off"
