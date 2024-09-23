@@ -3,19 +3,38 @@
   import { enhance } from '$app/forms';
   import type { PageData } from './$types.js';
   import Counter from '$lib/components/Counter.svelte';
+  import { filterListByKey } from '$lib/fuzzy';
+
+  interface Recipe {
+    id: string;
+    name: string;
+    servings: number;
+    number: number;
+  }
 
   export let data: PageData;
   export let form: ActionData;
 
-  let recipes = data.recipes.map(({ id, name, servings }) => ({
+  let recipes: Recipe[] = data.recipes.map(({ id, name, servings }) => ({
     id,
     name,
     servings,
     number: form?.data.get(id) ?? 0
   }));
-  
+
   $: selectedRecipes = recipes.filter((recipe) => recipe.number > 0);
-  $: unselectedRecipes = recipes.filter((recipe) => recipe.number === 0);
+  $: unselectedRecipes = filterUnselected(recipes, search);
+
+  let search = '';
+
+  function filterUnselected(recipes: Recipe[], search: string): Recipe[] {
+    const unselected = recipes.filter((recipe) => recipe.number === 0);
+    if (search) {
+      return filterListByKey(recipes, 'name', search);
+    } else {
+      return unselected;
+    }
+  }
 </script>
 
 <main class="container">
@@ -27,7 +46,7 @@
     <h1>Create list</h1>
 
     <div role="search">
-      <input type="search" placeholder="Search" />
+      <input type="search" placeholder="Search" bind:value={search} />
     </div>
 
     <form method="post" use:enhance>
@@ -55,6 +74,8 @@
             +
           </button>
         </article>
+      {:else}
+        <p>No recipes found</p>
       {/each}
 
       <div>
