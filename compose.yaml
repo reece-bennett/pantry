@@ -18,7 +18,7 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
   app:
-    image: reecebenentt/pantry-app
+    image: reecebennett/pantry-app
     depends_on:
       db:
         condition: service_healthy
