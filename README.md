@@ -44,6 +44,8 @@ Build the SvelteKit image with `docker build -t reecebennett/pantry-app .` then 
 
 To build a multi-platform image enable `Use containerd for pulling and storing images` in the Docker Desktop settings then run `docker buildx build --platform linux/amd64,linux/arm64 -t reecebennett/pantry-app:latest --push .`.
 
+When deploying on another machine run `docker compose pull` to download new images from Docker Hub (or `docker pull reecebennett/pantry-app` to just download the new app image), then `docker compose up -d`.
+
 ## Database
 
 Pantry uses [Prisma ORM](https://www.prisma.io/) for database migrations and queries.
