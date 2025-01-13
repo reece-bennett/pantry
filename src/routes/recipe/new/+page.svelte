@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run, preventDefault } from 'svelte/legacy';
-
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types.js';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
@@ -11,6 +9,12 @@
   }
 
   let { data, form }: Props = $props();
+
+  $effect(() => {
+    initialiseIngredientRows(form);
+    initialiseSteps(form);
+    initialiseErrors(form);
+  })
 
   let ingredientRows = $state([{ amount: '', unit: data.units[0], ingredient: '', original: '' }]);
 
@@ -53,6 +57,21 @@
     }
   }
 
+  let errors: { [x: string]: string } | undefined = $state();
+
+  function initialiseErrors(form: ActionData) {
+    if (form) {
+      errors = form.errors;
+    }
+  }
+
+  let stepRows = $state(['']);
+
+  function initialiseSteps(form: ActionData) {
+    if (form) {
+      stepRows = form.data.steps;
+    }
+  }
 
 
   function addStep() {
@@ -62,22 +81,6 @@
   function removeStep(i: number) {
     stepRows = stepRows.toSpliced(i, 1);
   }
-
-  // $: console.log('data', data);
-  // $: console.log('form', form);
-  // $: console.log('ingredientRows', ingredientRows);
-  // $: console.log('stepRows', stepRows);
-  run(() => {
-    initialiseIngredientRows(form);
-  });
-  let errors;
-  run(() => {
-    errors = form?.errors;
-  });
-  let stepRows;
-  run(() => {
-    stepRows = form ? form.data.steps : [''];
-  });
 </script>
 
 <main class="container">
@@ -170,7 +173,7 @@
           original={ingredient.original}
         />
       {/each}
-      <button type="button" onclick={preventDefault(addIngredient)}>Add</button>
+      <button type="button" onclick={addIngredient}>Add</button>
 
       <h2>Steps</h2>
       {#each stepRows as step, i}
@@ -178,12 +181,12 @@
         <fieldset role="group">
           <textarea
             name="step"
-            bind:value={step}
+            bind:value={stepRows[i]}
             aria-invalid={errors?.['step' + i] ? 'true' : undefined}
           ></textarea>
           <button
             type="button"
-            onclick={preventDefault(() => removeStep(i))}
+            onclick={() => removeStep(i)}
             disabled={stepRows.length < 2}
           >
             ❌
@@ -193,7 +196,7 @@
           <small class="error">{errors['step' + i]}</small>
         {/if}
       {/each}
-      <button type="button" onclick={preventDefault(addStep)}>Add</button>
+      <button type="button" onclick={addStep}>Add</button>
 
       <button type="submit">Submit</button>
       {#if errors}

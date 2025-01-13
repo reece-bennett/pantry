@@ -1,22 +1,17 @@
 <script lang="ts">
-  import { run, preventDefault } from 'svelte/legacy';
-
   import { fuzzySearch } from '$lib/fuzzy';
-
-
-
 
   interface Props {
     units: string[];
     ingredients: string[];
     errors: { [x: string]: string } | undefined;
     index: number;
-    enableRemove?: boolean;
+    enableRemove: boolean;
     remove: () => void;
-    amount?: string;
-    unit?: any;
-    ingredient?: string;
-    original?: string;
+    amount: string;
+    unit: string;
+    ingredient: string;
+    original: string;
   }
 
   let {
@@ -32,23 +27,11 @@
     original = ''
   }: Props = $props();
 
-  let _ingredient;
-  run(() => {
-    _ingredient = ingredient;
-  });
-  let isExistingValue = $derived(!ingredient || ingredients.includes(ingredient));
-  let suggestion;
-  run(() => {
-    suggestion = isExistingValue ? '' : fuzzySearch(ingredients, ingredient)[0];
-  });
-
-  function updateIngredient() {
-    ingredient = _ingredient;
-  }
+  let isNewIngredient = $derived(ingredient && !ingredients.includes(ingredient));
+  let suggestion = $derived(isNewIngredient ? fuzzySearch(ingredients, ingredient)[0] : '');
 
   function acceptSuggestion() {
     ingredient = suggestion;
-    suggestion = '';
   }
 </script>
 
@@ -80,9 +63,8 @@
     type="text"
     list="ingredient-list"
     autocomplete="off"
-    bind:value={_ingredient}
+    bind:value={ingredient}
     aria-invalid={errors?.[`ingredient${index}`] ? 'true' : undefined}
-    onchange={updateIngredient}
   />
   <input name="original" type="hidden" value={original} />
 
@@ -92,13 +74,13 @@
     {/each}
   </datalist>
 
-  <button type="button" onclick={preventDefault(remove)} disabled={!enableRemove}> ❌ </button>
+  <button type="button" onclick={remove} disabled={!enableRemove}> ❌ </button>
 </fieldset>
 <div class="message-container">
   {#if original}
     <small>Original text: {original}</small>
   {/if}
-  {#if !isExistingValue}
+  {#if isNewIngredient}
     <small>A new ingredient will be created</small>
   {/if}
   {#if suggestion}
@@ -182,5 +164,6 @@
     --pico-underline: var(--pico-primary-hover-underline);
     --pico-text-decoration: underline;
     --pico-box-shadow: 0;
+    --pico-background-color: transparent;
   }
 </style>
