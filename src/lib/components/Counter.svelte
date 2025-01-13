@@ -1,10 +1,8 @@
-<!-- 
+<!--
   Input modifier idea adapted from https://github.com/sveltejs/svelte/issues/3937#issuecomment-1924718545
 -->
 
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
-
   interface Props {
     name: string;
     number: number;
@@ -17,9 +15,9 @@
 <fieldset role="group">
   <button
     type="button"
-    onclick={preventDefault(() => {
+    onclick={() => {
       number = Math.max(0, number - 1);
-    })}
+    }}
   >
     -
   </button>
@@ -39,9 +37,9 @@
   />
   <button
     type="button"
-    onclick={preventDefault(() => {
+    onclick={() => {
       number++;
-    })}
+    }}
   >
     +
   </button>

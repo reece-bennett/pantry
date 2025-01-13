@@ -46,12 +46,10 @@
   --item-color="var(--pico-color)"
   --border-focused="1px solid var(--pico-form-element-focus-color)"
 >
-  {#snippet item({ item })}
-    <div  >
-      {item.created ? 'Add new: ' : ''}
-      {item.name}
-    </div>
-  {/snippet}
+  <div slot="item" let:item>
+    {item.created ? 'Add new: ' : ''}
+    {item.name}
+  </div>
 </Select>
 
 <input type="hidden" name="ingredient" bind:value={justValue} />

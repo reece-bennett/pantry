@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
-
   import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   import Modal from '$lib/components/Modal.svelte';
@@ -47,7 +45,7 @@
       return 0;
     }));
 
-  let modal: Modal = $state();
+  let modal: Modal;
 </script>
 
 <main class="container">
@@ -84,7 +82,7 @@
 
     <form id="form" method="post" use:enhance>
       <input type="hidden" name="id" value={data.list.id} />
-      <button onclick={preventDefault(() => modal.showModal())}>Delete list</button>
+      <button type="button" onclick={() => modal.showModal()}>Delete list</button>
     </form>
   </section>
 </main>

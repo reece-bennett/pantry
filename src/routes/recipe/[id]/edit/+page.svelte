@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run, preventDefault } from 'svelte/legacy';
-
   import { enhance } from '$app/forms';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
   import type { ActionData, PageData } from './$types';
@@ -11,6 +9,12 @@
   }
 
   let { data, form }: Props = $props();
+
+  $effect(() => {
+    initialiseIngredientRows(form, data);
+    initialiseStepRows(form, data);
+    initialiseErrors(form);
+  })
 
   let ingredientRows = $state([{ amount: '', unit: data.units[0], ingredient: '' }]);
 
@@ -54,9 +58,17 @@
     }
   }
 
+  let errors: { [x: string]: string } | undefined = $state();
+
+  function initialiseErrors(form: ActionData) {
+    if (form) {
+      errors = form.errors;
+    }
+  }
+
 
   let stepRows = $state([{ id: '', content: '' }]);
-  
+
   function initialiseStepRows(form: ActionData, data: PageData) {
     if (form) {
       stepRows = form.data.steps.map((step, i) => ({ id: form.data.stepIds[i], content: step }));
@@ -77,16 +89,6 @@
   // $: console.log('form', form);
   // $: console.log('ingredientRows', ingredientRows);
   // $: console.log('stepRows', stepRows);
-  run(() => {
-    initialiseIngredientRows(form, data);
-  });
-  let errors;
-  run(() => {
-    errors = form?.errors;
-  });
-  run(() => {
-    initialiseStepRows(form, data);
-  });
 </script>
 
 <main class="container">
@@ -164,7 +166,7 @@
           bind:ingredient={ingredient.ingredient}
         />
       {/each}
-      <button type="button" onclick={preventDefault(addIngredient)}>Add</button>
+      <button type="button" onclick={addIngredient}>Add</button>
 
       <h2>Steps</h2>
       {#each stepRows as step, i}
@@ -178,7 +180,7 @@
           ></textarea>
           <button
             type="button"
-            onclick={preventDefault(() => removeStep(i))}
+            onclick={() => removeStep(i)}
             disabled={stepRows.length < 2}
           >
             ❌
@@ -188,7 +190,7 @@
           <small class="error">{errors['step' + i]}</small>
         {/if}
       {/each}
-      <button type="button" onclick={preventDefault(addStep)}>Add</button>
+      <button type="button" onclick={addStep}>Add</button>
 
       <button type="submit">Submit</button>
       <a href="/recipe/{data.recipe.id}">Cancel</a>

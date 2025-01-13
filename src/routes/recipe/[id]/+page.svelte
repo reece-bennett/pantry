@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { preventDefault } from 'svelte/legacy';
-
   import { enhance } from '$app/forms';
   import Modal from '$lib/components/Modal.svelte';
   import type { PageData } from './$types';
@@ -11,7 +9,7 @@
 
   let { data }: Props = $props();
 
-  let modal: Modal = $state();
+  let modal: Modal;
 </script>
 
 <main class="container">
@@ -56,7 +54,7 @@
 
     <form id="form" method="post" use:enhance>
       <input type="hidden" name="id" value={data.recipe.id} />
-      <button onclick={preventDefault(() => modal.showModal())}>Delete recipe</button>
+      <button type="button" onclick={() => modal.showModal()}>Delete recipe</button>
     </form>
   </section>
 </main>

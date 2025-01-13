@@ -11,7 +11,7 @@
     amount: string;
     unit: string;
     ingredient: string;
-    original: string;
+    original?: string;
   }
 
   let {

@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
 
@@ -11,10 +9,9 @@
 
   let { data, form }: Props = $props();
 
-  run(() => {
-    console.log(form);
-  });
   let ingredients = $derived(form?.success ? form?.data?.recipe?.ingredients ?? [] : []);
+
+  $inspect(form);
 </script>
 
 <main class="container">

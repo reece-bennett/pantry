@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { enhance } from '$app/forms';
   import Modal from '$lib/components/Modal.svelte';
   import { fuzzySearch } from '$lib/fuzzy';
@@ -14,15 +12,27 @@
   let { data, form }: Props = $props();
 
   let filterString = $state('');
+  let searchResults = $derived(fuzzySearch(data.ingredients, filterString));
 
   let showOnlySimilar = $state(false);
 
+  let ingredients = $derived(data.ingredients.map((ingredient) => ({
+    original: ingredient,
+    name: ingredient,
+    shown:
+      (searchResults.length === 0 || searchResults.includes(ingredient)) &&
+      (!showOnlySimilar || similarIngredients.includes(ingredient))
+  })));
 
-  let modal: Modal = $state();
-  let ingredientToDelete: string = $state();
+  let modal: Modal;
+  let ingredientToDelete: string = $state('');
 
+  $effect(() => {
+    if (modal.isOpen() && form && form.success) {
+      modal.close();
+    }
+  });
 
-  let searchResults = $derived(fuzzySearch(data.ingredients, filterString));
   let similarIngredients = $derived(data.ingredients.flatMap((ingredient) => {
     const result = fuzzySearch(data.ingredients, ingredient);
     if (result.length > 1) {
@@ -31,18 +41,6 @@
       return [];
     }
   }));
-  let ingredients = $derived(data.ingredients.map((ingredient) => ({
-    original: ingredient,
-    name: ingredient,
-    shown:
-      (searchResults.length === 0 || searchResults.includes(ingredient)) &&
-      (!showOnlySimilar || similarIngredients.includes(ingredient))
-  })));
-  run(() => {
-    if (modal?.isOpen() && form && form.success) {
-      modal.close();
-    }
-  });
 </script>
 
 <main class="container">

@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { self, createBubbler, stopPropagation } from 'svelte/legacy';
-
-  const bubble = createBubbler();
   import { browser } from '$app/environment';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, type Snippet } from 'svelte';
+
   interface Props {
-    children?: import('svelte').Snippet;
+    children: Snippet;
   }
 
   let { children }: Props = $props();
@@ -17,7 +15,7 @@
   const ANIMATION_DURATION_MS = 400;
 
   let html: HTMLElement;
-  let dialog: HTMLDialogElement = $state();
+  let dialog: HTMLDialogElement;
   let closing = $state(false);
 
   export function isOpen() {
@@ -84,11 +82,9 @@
   onclose={() => {
     closing = false;
   }}
-  onclick={self(() => close())}
+  onclick={() => close()}
 >
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-  <article onclick={stopPropagation(bubble('click'))}>
-    {@render children?.()}
+  <article onclick={(event) => event.stopPropagation() }>
+    {@render children()}
   </article>
 </dialog>
