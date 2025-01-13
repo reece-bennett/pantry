@@ -1,40 +1,46 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { enhance } from '$app/forms';
   import Modal from '$lib/components/Modal.svelte';
   import { fuzzySearch } from '$lib/fuzzy';
   import type { ActionData, PageData } from './$types';
 
-  export let data: PageData;
-  export let form: ActionData;
-
-  let filterString = '';
-  $: searchResults = fuzzySearch(data.ingredients, filterString);
-
-  let showOnlySimilar = false;
-
-  $: ingredients = data.ingredients.map((ingredient) => ({
-    original: ingredient,
-    name: ingredient,
-    shown:
-      (searchResults.length === 0 || searchResults.includes(ingredient)) &&
-      (!showOnlySimilar || similarIngredients.includes(ingredient))
-  }));
-
-  let modal: Modal;
-  let ingredientToDelete: string;
-
-  $: {
-    if (modal?.isOpen() && form && form.success) {
-      modal.close();
-    }
+  interface Props {
+    data: PageData;
+    form: ActionData;
   }
 
-  $: similarIngredients = data.ingredients.flatMap((ingredient) => {
+  let { data, form }: Props = $props();
+
+  let filterString = $state('');
+
+  let showOnlySimilar = $state(false);
+
+
+  let modal: Modal = $state();
+  let ingredientToDelete: string = $state();
+
+
+  let searchResults = $derived(fuzzySearch(data.ingredients, filterString));
+  let similarIngredients = $derived(data.ingredients.flatMap((ingredient) => {
     const result = fuzzySearch(data.ingredients, ingredient);
     if (result.length > 1) {
       return [...result, ingredient];
     } else {
       return [];
+    }
+  }));
+  let ingredients = $derived(data.ingredients.map((ingredient) => ({
+    original: ingredient,
+    name: ingredient,
+    shown:
+      (searchResults.length === 0 || searchResults.includes(ingredient)) &&
+      (!showOnlySimilar || similarIngredients.includes(ingredient))
+  })));
+  run(() => {
+    if (modal?.isOpen() && form && form.success) {
+      modal.close();
     }
   });
 </script>
@@ -73,7 +79,7 @@
             </div>
             <button
               type="button"
-              on:click={() => {
+              onclick={() => {
                 ingredientToDelete = name;
                 modal.showModal();
               }}
@@ -108,7 +114,7 @@
   </form>
   <p>This action cannot be undone!</p>
   <footer>
-    <button type="button" class="secondary" on:click={() => modal.close()}>Cancel</button>
+    <button type="button" class="secondary" onclick={() => modal.close()}>Cancel</button>
     <button form="deleteForm">Confirm</button>
   </footer>
 </Modal>

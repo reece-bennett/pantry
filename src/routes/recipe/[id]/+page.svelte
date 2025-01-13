@@ -1,11 +1,17 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import { enhance } from '$app/forms';
   import Modal from '$lib/components/Modal.svelte';
   import type { PageData } from './$types';
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
 
-  let modal: Modal;
+  let { data }: Props = $props();
+
+  let modal: Modal = $state();
 </script>
 
 <main class="container">
@@ -50,7 +56,7 @@
 
     <form id="form" method="post" use:enhance>
       <input type="hidden" name="id" value={data.recipe.id} />
-      <button on:click|preventDefault={() => modal.showModal()}>Delete recipe</button>
+      <button onclick={preventDefault(() => modal.showModal())}>Delete recipe</button>
     </form>
   </section>
 </main>
@@ -59,7 +65,7 @@
   <h2>Delete recipe '{data.recipe.name}'?</h2>
   <p>This action cannot be undone!</p>
   <footer>
-    <button class="secondary" on:click={() => modal.close()}>Cancel</button>
-    <button form="form" on:click={() => modal.close()}>Confirm</button>
+    <button class="secondary" onclick={() => modal.close()}>Cancel</button>
+    <button form="form" onclick={() => modal.close()}>Confirm</button>
   </footer>
 </Modal>

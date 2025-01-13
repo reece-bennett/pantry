@@ -1,17 +1,25 @@
 <script lang="ts">
+  import { run } from 'svelte/legacy';
+
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types';
 
-  export let data: PageData;
-  export let form: ActionData;
+  interface Props {
+    data: PageData;
+    form: ActionData;
+  }
 
-  $: console.log(form);
-  $: ingredients = form?.success ? form?.data?.recipe?.ingredients ?? [] : [];
+  let { data, form }: Props = $props();
+
+  run(() => {
+    console.log(form);
+  });
+  let ingredients = $derived(form?.success ? form?.data?.recipe?.ingredients ?? [] : []);
 </script>
 
 <main class="container">
   <form method="post" use:enhance>
-    <!-- svelte-ignore a11y-no-redundant-roles -->
+    <!-- svelte-ignore a11y_no_redundant_roles -->
     <fieldset role="group">
       <input name="url" type="url" placeholder="Recipe URL" value={form?.data?.url ?? ''} />
       <button type="submit">Submit</button>

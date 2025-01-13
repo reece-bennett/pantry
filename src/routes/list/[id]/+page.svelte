@@ -1,9 +1,15 @@
 <script lang="ts">
+  import { preventDefault } from 'svelte/legacy';
+
   import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   import Modal from '$lib/components/Modal.svelte';
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
 
   type Ingredient = {
     name: string;
@@ -11,7 +17,7 @@
     amount: number;
   };
 
-  $: ingredients = data.list.meals
+  let ingredients = $derived(data.list.meals
     .flatMap((meal) =>
       meal.recipe.ingredients.map(
         (ingredient) =>
@@ -39,9 +45,9 @@
         return -1;
       }
       return 0;
-    });
+    }));
 
-  let modal: Modal;
+  let modal: Modal = $state();
 </script>
 
 <main class="container">
@@ -78,7 +84,7 @@
 
     <form id="form" method="post" use:enhance>
       <input type="hidden" name="id" value={data.list.id} />
-      <button on:click|preventDefault={() => modal.showModal()}>Delete list</button>
+      <button onclick={preventDefault(() => modal.showModal())}>Delete list</button>
     </form>
   </section>
 </main>
@@ -87,7 +93,7 @@
   <h2>Delete 'List {data.list.id}'?</h2>
   <p>This action cannot be undone!</p>
   <footer>
-    <button class="secondary" on:click={() => modal.close()}>Cancel</button>
-    <button form="form" on:click={() => modal.close()}>Confirm</button>
+    <button class="secondary" onclick={() => modal.close()}>Cancel</button>
+    <button form="form" onclick={() => modal.close()}>Confirm</button>
   </footer>
 </Modal>

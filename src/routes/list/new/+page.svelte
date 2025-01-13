@@ -12,20 +12,22 @@
     number: number;
   }
 
-  export let data: PageData;
-  export let form: ActionData;
+  interface Props {
+    data: PageData;
+    form: ActionData;
+  }
 
-  let recipes: Recipe[] = data.recipes.map(({ id, name, servings }) => ({
+  let { data, form }: Props = $props();
+
+  let recipes: Recipe[] = $state(data.recipes.map(({ id, name, servings }) => ({
     id,
     name,
     servings,
     number: form?.data.get(id) ?? 0
-  }));
+  })));
 
-  $: selectedRecipes = recipes.filter((recipe) => recipe.number > 0);
-  $: unselectedRecipes = filterUnselected(recipes, search);
 
-  let search = '';
+  let search = $state('');
 
   function filterUnselected(recipes: Recipe[], search: string): Recipe[] {
     const unselected = recipes.filter((recipe) => recipe.number === 0);
@@ -35,6 +37,8 @@
       return unselected;
     }
   }
+  let selectedRecipes = $derived(recipes.filter((recipe) => recipe.number > 0));
+  let unselectedRecipes = $derived(filterUnselected(recipes, search));
 </script>
 
 <main class="container">
@@ -66,7 +70,7 @@
           <span>{recipe.name}</span>
           <button
             type="button"
-            on:click={() => {
+            onclick={() => {
               recipe.number = recipe.servings;
               recipes = recipes;
             }}

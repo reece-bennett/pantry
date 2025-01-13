@@ -1,23 +1,46 @@
 <script lang="ts">
+  import { run, preventDefault } from 'svelte/legacy';
+
   import { fuzzySearch } from '$lib/fuzzy';
 
-  export let units: string[];
-  export let ingredients: string[];
 
-  export let errors: { [x: string]: string } | undefined;
 
-  export let index: number;
-  export let enableRemove = false;
-  export let remove: () => void;
 
-  export let amount = '';
-  export let unit = units[0];
-  export let ingredient = '';
-  export let original = '';
+  interface Props {
+    units: string[];
+    ingredients: string[];
+    errors: { [x: string]: string } | undefined;
+    index: number;
+    enableRemove?: boolean;
+    remove: () => void;
+    amount?: string;
+    unit?: any;
+    ingredient?: string;
+    original?: string;
+  }
 
-  $: _ingredient = ingredient;
-  $: isExistingValue = !ingredient || ingredients.includes(ingredient);
-  $: suggestion = isExistingValue ? '' : fuzzySearch(ingredients, ingredient)[0];
+  let {
+    units,
+    ingredients,
+    errors,
+    index,
+    enableRemove = false,
+    remove,
+    amount = $bindable(''),
+    unit = $bindable(units[0]),
+    ingredient = $bindable(''),
+    original = ''
+  }: Props = $props();
+
+  let _ingredient;
+  run(() => {
+    _ingredient = ingredient;
+  });
+  let isExistingValue = $derived(!ingredient || ingredients.includes(ingredient));
+  let suggestion;
+  run(() => {
+    suggestion = isExistingValue ? '' : fuzzySearch(ingredients, ingredient)[0];
+  });
 
   function updateIngredient() {
     ingredient = _ingredient;
@@ -29,7 +52,7 @@
   }
 </script>
 
-<!-- svelte-ignore a11y-no-redundant-roles -->
+<!-- svelte-ignore a11y_no_redundant_roles -->
 <fieldset role="group">
   <input
     name="amount"
@@ -59,7 +82,7 @@
     autocomplete="off"
     bind:value={_ingredient}
     aria-invalid={errors?.[`ingredient${index}`] ? 'true' : undefined}
-    on:change={updateIngredient}
+    onchange={updateIngredient}
   />
   <input name="original" type="hidden" value={original} />
 
@@ -69,7 +92,7 @@
     {/each}
   </datalist>
 
-  <button type="button" on:click|preventDefault={remove} disabled={!enableRemove}> ❌ </button>
+  <button type="button" onclick={preventDefault(remove)} disabled={!enableRemove}> ❌ </button>
 </fieldset>
 <div class="message-container">
   {#if original}
@@ -79,7 +102,7 @@
     <small>A new ingredient will be created</small>
   {/if}
   {#if suggestion}
-    <small>Did you mean <button type="button" class="link-button" on:click={acceptSuggestion}>{suggestion}</button>?</small>
+    <small>Did you mean <button type="button" class="link-button" onclick={acceptSuggestion}>{suggestion}</button>?</small>
   {/if}
   {#if errors?.[`amount${index}`]}
     <small class="error">Amount {errors[`amount${index}`]}</small>

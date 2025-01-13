@@ -1,11 +1,15 @@
 <script lang="ts">
   import Select from 'svelte-select';
 
-  export let items: any[];
-  export let value: any;
+  interface Props {
+    items: any[];
+    value: any;
+  }
 
-  let filterText = '';
-  let justValue: any;
+  let { items = $bindable(), value = $bindable() }: Props = $props();
+
+  let filterText = $state('');
+  let justValue: any = $state();
 
   // $: console.log(filterText, value, justValue, items);
 
@@ -42,10 +46,12 @@
   --item-color="var(--pico-color)"
   --border-focused="1px solid var(--pico-form-element-focus-color)"
 >
-  <div slot="item" let:item>
-    {item.created ? 'Add new: ' : ''}
-    {item.name}
-  </div>
+  {#snippet item({ item })}
+    <div  >
+      {item.created ? 'Add new: ' : ''}
+      {item.name}
+    </div>
+  {/snippet}
 </Select>
 
 <input type="hidden" name="ingredient" bind:value={justValue} />

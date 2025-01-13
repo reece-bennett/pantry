@@ -1,14 +1,19 @@
-<script>
+<script lang="ts">
   import { pwaInfo } from 'virtual:pwa-info';
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
 
-  $: webManifestLink = pwaInfo ? pwaInfo.webManifest.linkTag : ''
+  let { children }: Props = $props();
+
+  let webManifestLink = $derived(pwaInfo ? pwaInfo.webManifest.linkTag : '')
 </script>
 
 <svelte:head>
  	{@html webManifestLink}
 </svelte:head>
 
-<slot />
+{@render children?.()}
 
 <style>
   @import 'https://unpkg.com/@picocss/pico@latest/css/pico.min.css';

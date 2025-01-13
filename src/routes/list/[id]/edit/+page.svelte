@@ -3,19 +3,23 @@
   import Counter from '$lib/components/Counter.svelte';
   import type { ActionData, PageData } from './$types';
 
-  export let data: PageData;
-  export let form: ActionData;
+  interface Props {
+    data: PageData;
+    form: ActionData;
+  }
 
-  let recipes = data.recipes.map(({ id, name, servings }) => ({
+  let { data, form }: Props = $props();
+
+  let recipes = $state(data.recipes.map(({ id, name, servings }) => ({
     id,
     name,
     servings,
     number:
       form?.data.get(id) ?? data.list.meals.find((meal) => meal.recipeId === id)?.servings ?? 0
-  }));
+  })));
 
-  $: selectedRecipes = recipes.filter((recipe) => recipe.number > 0);
-  $: unselectedRecipes = recipes.filter((recipe) => recipe.number === 0);
+  let selectedRecipes = $derived(recipes.filter((recipe) => recipe.number > 0));
+  let unselectedRecipes = $derived(recipes.filter((recipe) => recipe.number === 0));
 </script>
 
 <main class="container">
@@ -47,7 +51,7 @@
           <span>{recipe.name}</span>
           <button
             type="button"
-            on:click={() => {
+            onclick={() => {
               recipe.number = recipe.servings;
               recipes = recipes;
             }}

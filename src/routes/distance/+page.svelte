@@ -4,7 +4,11 @@
   import type { PageData } from './$types';
   import uFuzzy from '@leeoniya/ufuzzy';
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
 
   const fuse = new Fuse(data.ingredients, {
     includeScore: true,
@@ -16,11 +20,11 @@
     intraMode: 1
   });
 
-  let levenshteinResults: { ingredient: string; distance: number }[] = [];
+  let levenshteinResults: { ingredient: string; distance: number }[] = $state([]);
 
-  let fuseResults: FuseResult<string>[] = [];
+  let fuseResults: FuseResult<string>[] = $state([]);
 
-  let ufResults: string[] = [];
+  let ufResults: string[] = $state([]);
 
   function handleInput(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
     const value = event.currentTarget.value;
@@ -40,7 +44,7 @@
 </script>
 
 <main class="container">
-  <input type="text" on:input={(event) => handleInput(event)} />
+  <input type="text" oninput={(event) => handleInput(event)} />
 
   <div class="grid">
     <div>

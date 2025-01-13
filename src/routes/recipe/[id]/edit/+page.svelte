@@ -1,13 +1,18 @@
 <script lang="ts">
+  import { run, preventDefault } from 'svelte/legacy';
+
   import { enhance } from '$app/forms';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
   import type { ActionData, PageData } from './$types';
 
-  export let data: PageData;
-  export let form: ActionData;
+  interface Props {
+    data: PageData;
+    form: ActionData;
+  }
 
-  let ingredientRows = [{ amount: '', unit: data.units[0], ingredient: '' }];
-  $: initialiseIngredientRows(form, data);
+  let { data, form }: Props = $props();
+
+  let ingredientRows = $state([{ amount: '', unit: data.units[0], ingredient: '' }]);
 
   function initialiseIngredientRows(form: ActionData, data: PageData) {
     if (form) {
@@ -49,10 +54,8 @@
     }
   }
 
-  $: errors = form?.errors;
 
-  let stepRows = [{ id: '', content: '' }];
-  $: initialiseStepRows(form, data);
+  let stepRows = $state([{ id: '', content: '' }]);
   
   function initialiseStepRows(form: ActionData, data: PageData) {
     if (form) {
@@ -74,6 +77,16 @@
   // $: console.log('form', form);
   // $: console.log('ingredientRows', ingredientRows);
   // $: console.log('stepRows', stepRows);
+  run(() => {
+    initialiseIngredientRows(form, data);
+  });
+  let errors;
+  run(() => {
+    errors = form?.errors;
+  });
+  run(() => {
+    initialiseStepRows(form, data);
+  });
 </script>
 
 <main class="container">
@@ -151,12 +164,12 @@
           bind:ingredient={ingredient.ingredient}
         />
       {/each}
-      <button type="button" on:click|preventDefault={addIngredient}>Add</button>
+      <button type="button" onclick={preventDefault(addIngredient)}>Add</button>
 
       <h2>Steps</h2>
       {#each stepRows as step, i}
         <input name="stepId" type="hidden" value={step.id} />
-        <!-- svelte-ignore a11y-no-redundant-roles -->
+        <!-- svelte-ignore a11y_no_redundant_roles -->
         <fieldset role="group">
           <textarea
             name="step"
@@ -165,7 +178,7 @@
           ></textarea>
           <button
             type="button"
-            on:click|preventDefault={() => removeStep(i)}
+            onclick={preventDefault(() => removeStep(i))}
             disabled={stepRows.length < 2}
           >
             ❌
@@ -175,7 +188,7 @@
           <small class="error">{errors['step' + i]}</small>
         {/if}
       {/each}
-      <button type="button" on:click|preventDefault={addStep}>Add</button>
+      <button type="button" onclick={preventDefault(addStep)}>Add</button>
 
       <button type="submit">Submit</button>
       <a href="/recipe/{data.recipe.id}">Cancel</a>

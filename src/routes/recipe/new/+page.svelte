@@ -1,13 +1,18 @@
 <script lang="ts">
+  import { run, preventDefault } from 'svelte/legacy';
+
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types.js';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
 
-  export let data: PageData;
-  export let form: ActionData;
+  interface Props {
+    data: PageData;
+    form: ActionData;
+  }
 
-  let ingredientRows = [{ amount: '', unit: data.units[0], ingredient: '', original: '' }];
-  $: initialiseIngredientRows(form);
+  let { data, form }: Props = $props();
+
+  let ingredientRows = $state([{ amount: '', unit: data.units[0], ingredient: '', original: '' }]);
 
   function initialiseIngredientRows(form: ActionData) {
     // console.log('initialiseIngredientRows');
@@ -48,9 +53,7 @@
     }
   }
 
-  $: errors = form?.errors;
 
-  $: stepRows = form ? form.data.steps : [''];
 
   function addStep() {
     stepRows = [...stepRows, ''];
@@ -64,6 +67,17 @@
   // $: console.log('form', form);
   // $: console.log('ingredientRows', ingredientRows);
   // $: console.log('stepRows', stepRows);
+  run(() => {
+    initialiseIngredientRows(form);
+  });
+  let errors;
+  run(() => {
+    errors = form?.errors;
+  });
+  let stepRows;
+  run(() => {
+    stepRows = form ? form.data.steps : [''];
+  });
 </script>
 
 <main class="container">
@@ -76,7 +90,7 @@
 
     <form method="post" action="?/url" use:enhance>
       <label for="url">Import from a URL</label>
-      <!-- svelte-ignore a11y-no-redundant-roles -->
+      <!-- svelte-ignore a11y_no_redundant_roles -->
       <fieldset role="group">
         <input
           id="url"
@@ -156,11 +170,11 @@
           original={ingredient.original}
         />
       {/each}
-      <button type="button" on:click|preventDefault={addIngredient}>Add</button>
+      <button type="button" onclick={preventDefault(addIngredient)}>Add</button>
 
       <h2>Steps</h2>
       {#each stepRows as step, i}
-        <!-- svelte-ignore a11y-no-redundant-roles -->
+        <!-- svelte-ignore a11y_no_redundant_roles -->
         <fieldset role="group">
           <textarea
             name="step"
@@ -169,7 +183,7 @@
           ></textarea>
           <button
             type="button"
-            on:click|preventDefault={() => removeStep(i)}
+            onclick={preventDefault(() => removeStep(i))}
             disabled={stepRows.length < 2}
           >
             ❌
@@ -179,7 +193,7 @@
           <small class="error">{errors['step' + i]}</small>
         {/if}
       {/each}
-      <button type="button" on:click|preventDefault={addStep}>Add</button>
+      <button type="button" onclick={preventDefault(addStep)}>Add</button>
 
       <button type="submit">Submit</button>
       {#if errors}

@@ -3,17 +3,23 @@
 -->
 
 <script lang="ts">
-  export let name: string;
-  export let number: number;
+  import { preventDefault } from 'svelte/legacy';
+
+  interface Props {
+    name: string;
+    number: number;
+  }
+
+  let { name, number = $bindable() }: Props = $props();
 </script>
 
-<!-- svelte-ignore a11y-no-redundant-roles -->
+<!-- svelte-ignore a11y_no_redundant_roles -->
 <fieldset role="group">
   <button
     type="button"
-    on:click|preventDefault={() => {
+    onclick={preventDefault(() => {
       number = Math.max(0, number - 1);
-    }}
+    })}
   >
     -
   </button>
@@ -22,9 +28,9 @@
     type="text"
     inputmode="numeric"
     value={String(number)}
-    on:focus={(event) => event.currentTarget.select()}
-    on:input={(event) => (event.currentTarget.value = event.currentTarget.value.replace(/\D/g, ''))}
-    on:change={(event) => {
+    onfocus={(event) => event.currentTarget.select()}
+    oninput={(event) => (event.currentTarget.value = event.currentTarget.value.replace(/\D/g, ''))}
+    onchange={(event) => {
       const parsed = parseInt(event.currentTarget.value);
       if (!isNaN(parsed)) {
         number = parsed;
@@ -33,9 +39,9 @@
   />
   <button
     type="button"
-    on:click|preventDefault={() => {
+    onclick={preventDefault(() => {
       number++;
-    }}
+    })}
   >
     +
   </button>

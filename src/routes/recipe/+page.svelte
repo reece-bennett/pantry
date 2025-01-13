@@ -2,11 +2,15 @@
   import type { PageData } from './$types';
   import { filterListByKey } from '$lib/fuzzy';
 
-  export let data: PageData;
+  interface Props {
+    data: PageData;
+  }
 
-  let search = '';
+  let { data }: Props = $props();
 
-  $: recipes = search ? filterListByKey(data.recipes, 'name', search) : data.recipes;
+  let search = $state('');
+
+  let recipes = $derived(search ? filterListByKey(data.recipes, 'name', search) : data.recipes);
 </script>
 
 <main class="container">

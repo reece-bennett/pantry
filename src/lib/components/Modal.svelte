@@ -1,6 +1,14 @@
 <script lang="ts">
+  import { self, createBubbler, stopPropagation } from 'svelte/legacy';
+
+  const bubble = createBubbler();
   import { browser } from '$app/environment';
   import { onDestroy } from 'svelte';
+  interface Props {
+    children?: import('svelte').Snippet;
+  }
+
+  let { children }: Props = $props();
 
   const IS_OPEN_CLASS = 'modal-is-open';
   const OPENING_CLASS = 'modal-is-opening';
@@ -9,8 +17,8 @@
   const ANIMATION_DURATION_MS = 400;
 
   let html: HTMLElement;
-  let dialog: HTMLDialogElement;
-  let closing = false;
+  let dialog: HTMLDialogElement = $state();
+  let closing = $state(false);
 
   export function isOpen() {
     return dialog.open;
@@ -69,18 +77,18 @@
   });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog
   bind:this={dialog}
-  on:close={() => {
+  onclose={() => {
     closing = false;
   }}
-  on:click|self={() => close()}
+  onclick={self(() => close())}
 >
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-  <article on:click|stopPropagation>
-    <slot />
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+  <article onclick={stopPropagation(bubble('click'))}>
+    {@render children?.()}
   </article>
 </dialog>
