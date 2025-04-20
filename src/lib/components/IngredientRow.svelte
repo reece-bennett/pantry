@@ -74,7 +74,20 @@
     {/each}
   </datalist>
 
-  <button type="button" onclick={remove} disabled={!enableRemove}> ❌ </button>
+  <button type="button" class="icon" onclick={remove} disabled={!enableRemove} aria-label="Remove">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg
+    >
+  </button>
 </fieldset>
 <div class="message-container">
   {#if original}
@@ -84,7 +97,11 @@
     <small>A new ingredient will be created</small>
   {/if}
   {#if suggestion}
-    <small>Did you mean <button type="button" class="link-button" onclick={acceptSuggestion}>{suggestion}</button>?</small>
+    <small
+      >Did you mean <button type="button" class="link-button" onclick={acceptSuggestion}
+        >{suggestion}</button
+      >?</small
+    >
   {/if}
   {#if errors?.[`amount${index}`]}
     <small class="error">Amount {errors[`amount${index}`]}</small>
@@ -98,9 +115,40 @@
 </div>
 
 <style>
+  fieldset {
+    display: flex;
+    padding: 0;
+    border: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  input,
+  select {
+    background: none;
+    border: 1px solid var(--border);
+    padding: 0.5rem;
+    margin-left: -1px;
+    color: inherit;
+    border-radius: 0;
+  }
+
+  input.amount {
+    border-radius: 0.5rem 0 0 0.5rem;
+    margin-left: 0;
+  }
+
   input.amount,
   select.unit {
     width: 25%;
+  }
+
+  button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 0 0.5rem 0.5rem 0;
+    margin-left: -1px;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   .error {

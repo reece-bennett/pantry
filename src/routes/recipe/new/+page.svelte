@@ -2,6 +2,8 @@
   import { enhance } from '$app/forms';
   import type { ActionData, PageData } from './$types.js';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
+  import Header from '$lib/components/Header.svelte';
+  import Footer from '$lib/components/Footer.svelte';
 
   interface Props {
     data: PageData;
@@ -14,7 +16,7 @@
     initialiseIngredientRows(form);
     initialiseSteps(form);
     initialiseErrors(form);
-  })
+  });
 
   let ingredientRows = $state([{ amount: '', unit: data.units[0], ingredient: '', original: '' }]);
 
@@ -73,7 +75,6 @@
     }
   }
 
-
   function addStep() {
     stepRows = [...stepRows, ''];
   }
@@ -83,12 +84,9 @@
   }
 </script>
 
-<main class="container">
-  <p>
-    <a href="/recipe">Back</a>
-  </p>
-
-  <section>
+<div id="root">
+  <Header backUrl="/recipe" />
+  <main class="container">
     <h1>Create new recipe</h1>
 
     <form method="post" action="?/url" use:enhance>
@@ -184,11 +182,7 @@
             bind:value={stepRows[i]}
             aria-invalid={errors?.['step' + i] ? 'true' : undefined}
           ></textarea>
-          <button
-            type="button"
-            onclick={() => removeStep(i)}
-            disabled={stepRows.length < 2}
-          >
+          <button type="button" onclick={() => removeStep(i)} disabled={stepRows.length < 2}>
             ❌
           </button>
         </fieldset>
@@ -204,8 +198,9 @@
       {/if}
       <a href="/recipe">Cancel</a>
     </form>
-  </section>
-</main>
+  </main>
+  <Footer />
+</div>
 
 <style>
   .error {

@@ -1,6 +1,8 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import Counter from '$lib/components/Counter.svelte';
+  import Footer from '$lib/components/Footer.svelte';
+  import Header from '$lib/components/Header.svelte';
   import type { ActionData, PageData } from './$types';
 
   interface Props {
@@ -10,24 +12,23 @@
 
   let { data, form }: Props = $props();
 
-  let recipes = $state(data.recipes.map(({ id, name, servings }) => ({
-    id,
-    name,
-    servings,
-    number:
-      form?.data.get(id) ?? data.list.meals.find((meal) => meal.recipeId === id)?.servings ?? 0
-  })));
+  let recipes = $state(
+    data.recipes.map(({ id, name, servings }) => ({
+      id,
+      name,
+      servings,
+      number:
+        form?.data.get(id) ?? data.list.meals.find((meal) => meal.recipeId === id)?.servings ?? 0
+    }))
+  );
 
   let selectedRecipes = $derived(recipes.filter((recipe) => recipe.number > 0));
   let unselectedRecipes = $derived(recipes.filter((recipe) => recipe.number === 0));
 </script>
 
-<main class="container">
-  <p>
-    <a href="/list/{data.list.id}">Back</a>
-  </p>
-
-  <section>
+<div id="root">
+  <Header backUrl="/list/{data.list.id}" />
+  <main class="container">
     <h1>Editing list</h1>
 
     <div role="search">
@@ -66,8 +67,9 @@
         <a href="/recipe">Cancel</a>
       </div>
     </form>
-  </section>
-</main>
+  </main>
+  <Footer />
+</div>
 
 <style>
   .recipe-row {

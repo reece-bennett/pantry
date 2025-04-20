@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Footer from '$lib/components/Footer.svelte';
+  import Header from '$lib/components/Header.svelte';
   import type { PageData } from './$types';
   interface Props {
     data: PageData;
@@ -7,14 +9,9 @@
   let { data }: Props = $props();
 </script>
 
-<main class="container">
-  <p>
-    <a href="/">Back</a>
-  </p>
-
-  <section>
-    <h1>Lists</h1>
-
+<div id="root">
+  <Header title="lists" />
+  <main class="container">
     <p>
       <a href="/list/new">Create list</a>
     </p>
@@ -26,5 +23,6 @@
         </li>
       {/each}
     </ul>
-  </section>
-</main>
+  </main>
+  <Footer />
+</div>

@@ -1,6 +1,12 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import Button from '$lib/components/Button.svelte';
+  import Footer from '$lib/components/Footer.svelte';
+  import Header from '$lib/components/Header.svelte';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
+  import StepRow from '$lib/components/StepRow.svelte';
+  import TextArea from '$lib/components/TextArea.svelte';
+  import TextInput from '$lib/components/TextInput.svelte';
   import type { ActionData, PageData } from './$types';
 
   interface Props {
@@ -14,7 +20,7 @@
     initialiseIngredientRows(form, data);
     initialiseStepRows(form, data);
     initialiseErrors(form);
-  })
+  });
 
   let ingredientRows = $state([{ amount: '', unit: data.units[0], ingredient: '' }]);
 
@@ -66,7 +72,6 @@
     }
   }
 
-
   let stepRows = $state([{ id: '', content: '' }]);
 
   function initialiseStepRows(form: ActionData, data: PageData) {
@@ -91,66 +96,64 @@
   // $: console.log('stepRows', stepRows);
 </script>
 
-<main class="container">
-  <p>
-    <a href="/recipe/{data.recipe.id}">Back</a>
-  </p>
+<div id="root">
+  <Header backUrl="/recipe/{data.recipe.id}">
+    {#snippet actions()}
+      <button type="submit" form="edit-form" class="icon" aria-label="Save">
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5"/></svg> -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-save-icon lucide-save"
+        >
+          <path
+            d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+          />
+          <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+          <path d="M7 3v4a1 1 0 0 0 1 1h7" /></svg
+        >
+      </button>
+    {/snippet}
+  </Header>
 
-  <section>
+  <main class="container">
     <hgroup>
       <h1>Editing recipe</h1>
       <p>{data.recipe.name}</p>
     </hgroup>
 
-    <form method="post" use:enhance>
-      <label for="title">Title</label>
-      <input
-        id="title"
-        name="title"
-        type="text"
-        value={form?.data.title ?? data.recipe.name}
-        aria-invalid={form?.errors.title ? 'true' : undefined}
-      />
-      {#if form?.errors.title}
-        <small>{form?.errors.title}</small>
-      {/if}
+    <form id="edit-form" method="post" use:enhance>
+      <TextInput name="title" label="Title" value={form?.data.title ?? data.recipe.name} {errors} />
 
-      <label for="description">Description</label>
-      <textarea
-        id="description"
+      <TextArea
         name="description"
+        label="Description"
         value={form?.data.description ?? data.recipe.description}
-        aria-invalid={form?.errors.description ? 'true' : undefined}
-      ></textarea>
-      {#if form?.errors.description}
-        <small>{form?.errors.description}</small>
-      {/if}
+        {errors}
+      />
 
-      <label for="servings">Servings</label>
-      <input
-        id="servings"
+      <TextInput
         name="servings"
-        type="text"
-        inputmode="numeric"
+        label="Servings"
         value={form?.data.servings ?? data.recipe.servings}
-        aria-invalid={form?.errors.servings ? 'true' : undefined}
-      />
-      {#if form?.errors.servings}
-        <small>{form?.errors.servings}</small>
-      {/if}
-
-      <label for="time">Time taken (mins)</label>
-      <input
-        id="time"
-        name="time"
-        type="text"
+        {errors}
         inputmode="numeric"
-        value={form?.data.time ?? data.recipe.time}
-        aria-invalid={form?.errors.time ? 'true' : undefined}
       />
-      {#if form?.errors.time}
-        <small>{form?.errors.time}</small>
-      {/if}
+
+      <TextInput
+        name="time"
+        label="Time taken (mins)"
+        value={form?.data.time ?? data.recipe.time}
+        {errors}
+        inputmode="numeric"
+      />
 
       <h2>Ingredients</h2>
       {#each ingredientRows as ingredient, index}
@@ -166,34 +169,24 @@
           bind:ingredient={ingredient.ingredient}
         />
       {/each}
-      <button type="button" onclick={addIngredient}>Add</button>
+      <Button onclick={addIngredient}>Add</Button>
 
       <h2>Steps</h2>
-      {#each stepRows as step, i}
-        <input name="stepId" type="hidden" value={step.id} />
-        <!-- svelte-ignore a11y_no_redundant_roles -->
-        <fieldset role="group">
-          <textarea
-            name="step"
-            bind:value={step.content}
-            aria-invalid={errors?.['step' + i] ? 'true' : undefined}
-          ></textarea>
-          <button
-            type="button"
-            onclick={() => removeStep(i)}
-            disabled={stepRows.length < 2}
-          >
-            ❌
-          </button>
-        </fieldset>
-        {#if errors?.['step' + i]}
-          <small class="error">{errors['step' + i]}</small>
-        {/if}
+      {#each stepRows as step, index}
+        <StepRow
+          {errors}
+          {index}
+          id={step.id}
+          enableRemove={stepRows.length > 1}
+          remove={() => removeStep(index)}
+          bind:value={step.content}
+        />
       {/each}
-      <button type="button" onclick={addStep}>Add</button>
+      <Button onclick={addStep}>Add</Button>
 
-      <button type="submit">Submit</button>
-      <a href="/recipe/{data.recipe.id}">Cancel</a>
+      <Button>Delete recipe</Button>
     </form>
-  </section>
-</main>
+  </main>
+
+  <Footer />
+</div>

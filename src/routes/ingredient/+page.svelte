@@ -1,5 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import Footer from '$lib/components/Footer.svelte';
+  import Header from '$lib/components/Header.svelte';
   import Modal from '$lib/components/Modal.svelte';
   import { fuzzySearch } from '$lib/fuzzy';
   import type { ActionData, PageData } from './$types';
@@ -16,13 +18,15 @@
 
   let showOnlySimilar = $state(false);
 
-  let ingredients = $derived(data.ingredients.map((ingredient) => ({
-    original: ingredient,
-    name: ingredient,
-    shown:
-      (searchResults.length === 0 || searchResults.includes(ingredient)) &&
-      (!showOnlySimilar || similarIngredients.includes(ingredient))
-  })));
+  let ingredients = $derived(
+    data.ingredients.map((ingredient) => ({
+      original: ingredient,
+      name: ingredient,
+      shown:
+        (searchResults.length === 0 || searchResults.includes(ingredient)) &&
+        (!showOnlySimilar || similarIngredients.includes(ingredient))
+    }))
+  );
 
   let modal: Modal;
   let ingredientToDelete: string = $state('');
@@ -33,24 +37,21 @@
     }
   });
 
-  let similarIngredients = $derived(data.ingredients.flatMap((ingredient) => {
-    const result = fuzzySearch(data.ingredients, ingredient);
-    if (result.length > 1) {
-      return [...result, ingredient];
-    } else {
-      return [];
-    }
-  }));
+  let similarIngredients = $derived(
+    data.ingredients.flatMap((ingredient) => {
+      const result = fuzzySearch(data.ingredients, ingredient);
+      if (result.length > 1) {
+        return [...result, ingredient];
+      } else {
+        return [];
+      }
+    })
+  );
 </script>
 
-<main class="container">
-  <p>
-    <a href="/">Back</a>
-  </p>
-
-  <section>
-    <h1>Ingredients</h1>
-
+<div id="root">
+  <Header title="ingredients" />
+  <main class="container">
     <div class="search-container">
       <input type="search" placeholder="Filter" bind:value={filterString} />
       <fieldset>
@@ -90,8 +91,9 @@
 
       <button type="submit">Save</button>
     </form>
-  </section>
-</main>
+  </main>
+  <Footer />
+</div>
 
 <Modal bind:this={modal}>
   <h2>Delete ingredient</h2>

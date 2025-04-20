@@ -2,6 +2,8 @@
   import { enhance } from '$app/forms';
   import type { PageData } from './$types';
   import Modal from '$lib/components/Modal.svelte';
+  import Header from '$lib/components/Header.svelte';
+  import Footer from '$lib/components/Footer.svelte';
 
   interface Props {
     data: PageData;
@@ -15,45 +17,44 @@
     amount: number;
   };
 
-  let ingredients = $derived(data.list.meals
-    .flatMap((meal) =>
-      meal.recipe.ingredients.map(
-        (ingredient) =>
-          ({
-            name: ingredient.ingredientName,
-            unit: ingredient.unitName,
-            amount: ingredient.amount * (meal.servings / meal.recipe.servings)
-          }) as Ingredient
+  let ingredients = $derived(
+    data.list.meals
+      .flatMap((meal) =>
+        meal.recipe.ingredients.map(
+          (ingredient) =>
+            ({
+              name: ingredient.ingredientName,
+              unit: ingredient.unitName,
+              amount: ingredient.amount * (meal.servings / meal.recipe.servings)
+            }) as Ingredient
+        )
       )
-    )
-    .reduce((acc, cur) => {
-      const existing = acc.find((x) => x.name === cur.name);
-      if (existing) {
-        existing.amount += cur.amount;
-      } else {
-        acc.push(cur);
-      }
-      return acc;
-    }, [] as Ingredient[])
-    .sort((a, b) => {
-      if (a.name.toLowerCase() > b.name.toLowerCase()) {
-        return 1;
-      }
-      if (a.name.toLowerCase() < b.name.toLowerCase()) {
-        return -1;
-      }
-      return 0;
-    }));
+      .reduce((acc, cur) => {
+        const existing = acc.find((x) => x.name === cur.name);
+        if (existing) {
+          existing.amount += cur.amount;
+        } else {
+          acc.push(cur);
+        }
+        return acc;
+      }, [] as Ingredient[])
+      .sort((a, b) => {
+        if (a.name.toLowerCase() > b.name.toLowerCase()) {
+          return 1;
+        }
+        if (a.name.toLowerCase() < b.name.toLowerCase()) {
+          return -1;
+        }
+        return 0;
+      })
+  );
 
   let modal: Modal;
 </script>
 
-<main class="container">
-  <p>
-    <a href="/list">Back</a>
-  </p>
-
-  <section>
+<div id="root">
+  <Header backUrl="/list" />
+  <main class="container">
     <h1>List {data.list.id}</h1>
 
     <h2>Recipes</h2>
@@ -84,8 +85,9 @@
       <input type="hidden" name="id" value={data.list.id} />
       <button type="button" onclick={() => modal.showModal()}>Delete list</button>
     </form>
-  </section>
-</main>
+  </main>
+  <Footer />
+</div>
 
 <Modal bind:this={modal}>
   <h2>Delete 'List {data.list.id}'?</h2>

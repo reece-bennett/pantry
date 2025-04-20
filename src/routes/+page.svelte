@@ -1,15 +1,22 @@
-<main class="container">
-  <h1>Pantry</h1>
+<script lang="ts">
+  import Footer from '$lib/components/Footer.svelte';
+  import Header from '$lib/components/Header.svelte';
+</script>
 
-  <ul>
-    <li>
-      <a href="/recipe">Recipes</a>
-    </li>
-    <li>
-      <a href="/list">Lists</a>
-    </li>
-    <li>
-      <a href="/ingredient">Ingredients</a>
-    </li>
-  </ul>
-</main>
+<div id="root">
+  <Header title="pantry" />
+  <main class="container">
+    <ul>
+      <li>
+        <a href="/recipe">Recipes</a>
+      </li>
+      <li>
+        <a href="/list">Lists</a>
+      </li>
+      <li>
+        <a href="/ingredient">Ingredients</a>
+      </li>
+    </ul>
+  </main>
+  <Footer />
+</div>

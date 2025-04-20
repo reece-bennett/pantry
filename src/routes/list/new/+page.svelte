@@ -4,6 +4,8 @@
   import type { PageData } from './$types.js';
   import Counter from '$lib/components/Counter.svelte';
   import { filterListByKey } from '$lib/fuzzy';
+  import Header from '$lib/components/Header.svelte';
+  import Footer from '$lib/components/Footer.svelte';
 
   interface Recipe {
     id: string;
@@ -19,13 +21,14 @@
 
   let { data, form }: Props = $props();
 
-  let recipes: Recipe[] = $state(data.recipes.map(({ id, name, servings }) => ({
-    id,
-    name,
-    servings,
-    number: form?.data.get(id) ?? 0
-  })));
-
+  let recipes: Recipe[] = $state(
+    data.recipes.map(({ id, name, servings }) => ({
+      id,
+      name,
+      servings,
+      number: form?.data.get(id) ?? 0
+    }))
+  );
 
   let search = $state('');
 
@@ -41,12 +44,9 @@
   let unselectedRecipes = $derived(filterUnselected(recipes, search));
 </script>
 
-<main class="container">
-  <p>
-    <a href="/list">Back</a>
-  </p>
-
-  <section>
+<div id="root">
+  <Header backUrl="/list" />
+  <main class="container">
     <h1>Create list</h1>
 
     <div role="search">
@@ -87,8 +87,9 @@
         <a href="/list">Cancel</a>
       </div>
     </form>
-  </section>
-</main>
+  </main>
+  <Footer />
+</div>
 
 <style>
   .recipe-row {
