@@ -3,7 +3,7 @@
 
   interface Props extends HTMLInputAttributes {
     name: string;
-    label: string;
+    label?: string;
     value?: any;
     errors: { [x: string]: string } | undefined;
   }
@@ -13,7 +13,9 @@
   let error = $derived(errors?.[name]);
 </script>
 
-<label for={name}>{label}</label>
+{#if label}
+  <label for={name}>{label}</label>
+{/if}
 <input type="text" id={name} {name} {value} aria-invalid={error ? 'true' : undefined} {...rest} />
 {#if error}
   <small>{error}</small>

@@ -35,8 +35,7 @@
   }
 </script>
 
-<!-- svelte-ignore a11y_no_redundant_roles -->
-<fieldset role="group">
+<fieldset>
   <input
     name="amount"
     class="amount"

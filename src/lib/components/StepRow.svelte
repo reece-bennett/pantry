@@ -2,7 +2,7 @@
   interface Props {
     errors: { [x: string]: string } | undefined;
     index: number;
-    id: string;
+    id?: string;
     enableRemove: boolean;
     remove: () => void;
     value: string;
@@ -11,7 +11,9 @@
   let { errors, index, id, enableRemove = false, remove, value = $bindable('') }: Props = $props();
 </script>
 
-<input name="stepId" type="hidden" value={id} />
+{#if id}
+  <input name="stepId" type="hidden" value={id} />
+{/if}
 <fieldset>
   <textarea name="step" bind:value aria-invalid={errors?.['step' + index] ? 'true' : undefined}
   ></textarea>

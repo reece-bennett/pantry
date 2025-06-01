@@ -4,6 +4,10 @@
   import IngredientRow from '$lib/components/IngredientRow.svelte';
   import Header from '$lib/components/Header.svelte';
   import Footer from '$lib/components/Footer.svelte';
+  import Button from '$lib/components/Button.svelte';
+  import StepRow from '$lib/components/StepRow.svelte';
+  import TextArea from '$lib/components/TextArea.svelte';
+  import TextInput from '$lib/components/TextInput.svelte';
 
   interface Props {
     data: PageData;
@@ -85,76 +89,70 @@
 </script>
 
 <div id="root">
-  <Header backUrl="/recipe" />
+  <Header backUrl="/recipe">
+    {#snippet actions()}
+      <button type="submit" form="create-form" class="icon" aria-label="Save">
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5"/></svg> -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-save-icon lucide-save"
+        >
+          <path
+            d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+          />
+          <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+          <path d="M7 3v4a1 1 0 0 0 1 1h7" /></svg
+        >
+      </button>
+    {/snippet}
+  </Header>
+
   <main class="container">
     <h1>Create new recipe</h1>
 
-    <form method="post" action="?/url" use:enhance>
+    <form id="url-form" method="post" action="?/url" use:enhance>
       <label for="url">Import from a URL</label>
-      <!-- svelte-ignore a11y_no_redundant_roles -->
-      <fieldset role="group">
-        <input
-          id="url"
-          name="url"
-          type="url"
-          placeholder="Recipe URL"
-          value={form?.data.url ?? ''}
-        />
-        <button type="submit">Submit</button>
+      <fieldset>
+        <TextInput type="url" name="url" value={form?.data.url ?? ''} {errors} />
+        <Button type="submit">Submit</Button>
       </fieldset>
     </form>
 
     <hr />
 
-    <form method="post" action="?/submit" use:enhance>
-      <input type="hidden" name="url" value={form?.data.url ?? ''} />
+    <form id="create-form" method="post" action="?/submit" use:enhance>
+      <TextInput name="title" label="Title" value={form?.data.title ?? ''} {errors} />
 
-      <label for="title">Title</label>
-      <input
-        id="title"
-        name="title"
-        type="text"
-        value={form?.data.title ?? ''}
-        aria-invalid={errors?.title ? 'true' : undefined}
-      />
-      {#if errors?.title}
-        <small>{errors.title}</small>
-      {/if}
-
-      <label for="description">Description</label>
-      <textarea
-        id="description"
+      <TextArea
         name="description"
+        label="Description"
         value={form?.data.description ?? ''}
-        aria-invalid={errors?.description ? 'true' : undefined}
-      ></textarea>
-      {#if errors?.description}
-        <small>{errors.description}</small>
-      {/if}
+        {errors}
+      />
 
-      <label for="servings">Servings</label>
-      <input
+      <TextInput
         name="servings"
-        type="text"
-        inputmode="numeric"
+        label="Servings"
         value={form?.data.servings ?? ''}
-        aria-invalid={errors?.servings ? 'true' : undefined}
-      />
-      {#if errors?.servings}
-        <small>{errors.servings}</small>
-      {/if}
-
-      <label for="servings">Time taken (mins)</label>
-      <input
-        name="time"
-        type="text"
+        {errors}
         inputmode="numeric"
-        value={form?.data.time ?? ''}
-        aria-invalid={errors?.time ? 'true' : undefined}
       />
-      {#if errors?.time}
-        <small>{errors.time}</small>
-      {/if}
+
+      <TextInput
+        name="time"
+        label="Time taken (mins)"
+        value={form?.data.time ?? ''}
+        {errors}
+        inputmode="numeric"
+      />
 
       <h2>Ingredients</h2>
       {#each ingredientRows as ingredient, index}
@@ -168,47 +166,37 @@
           bind:amount={ingredient.amount}
           bind:unit={ingredient.unit}
           bind:ingredient={ingredient.ingredient}
-          original={ingredient.original}
         />
       {/each}
-      <button type="button" onclick={addIngredient}>Add</button>
+      <Button onclick={addIngredient}>Add</Button>
 
       <h2>Steps</h2>
-      {#each stepRows as step, i}
-        <!-- svelte-ignore a11y_no_redundant_roles -->
-        <fieldset role="group">
-          <textarea
-            name="step"
-            bind:value={stepRows[i]}
-            aria-invalid={errors?.['step' + i] ? 'true' : undefined}
-          ></textarea>
-          <button type="button" onclick={() => removeStep(i)} disabled={stepRows.length < 2}>
-            ❌
-          </button>
-        </fieldset>
-        {#if errors?.['step' + i]}
-          <small class="error">{errors['step' + i]}</small>
-        {/if}
+      {#each stepRows as _, index}
+        <StepRow
+          {errors}
+          {index}
+          enableRemove={stepRows.length > 1}
+          remove={() => removeStep(index)}
+          bind:value={stepRows[index]}
+        />
       {/each}
-      <button type="button" onclick={addStep}>Add</button>
-
-      <button type="submit">Submit</button>
-      {#if errors}
-        <small class="error bottom-error">There are errors</small>
-      {/if}
-      <a href="/recipe">Cancel</a>
+      <Button onclick={addStep}>Add</Button>
     </form>
   </main>
   <Footer />
 </div>
 
 <style>
-  .error {
-    color: var(--pico-del-color);
+  #url-form > fieldset {
+    display: flex;
+    flex-direction: row;
+    border: none;
+    padding: 0;
   }
 
-  .bottom-error {
-    display: block;
-    margin-top: calc(var(--pico-spacing) * -0.75);
+  hr {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 1px solid var(--border);
   }
 </style>
