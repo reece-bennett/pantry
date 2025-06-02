@@ -77,6 +77,26 @@ export function updateList(id: number, listSubmission: ListSubmission) {
   });
 }
 
+export function addRecipe(id: number, recipeId: string, servings: number) {
+  return prisma.list.update({
+    where: {
+      id
+    },
+    data: {
+      meals: {
+        create: {
+          recipe: {
+            connect: {
+              id: recipeId
+            }
+          },
+          servings
+        }
+      }
+    }
+  });
+}
+
 export function deleteList(id: number) {
   return prisma.list.delete({
     where: {

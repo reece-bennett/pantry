@@ -11,8 +11,7 @@
   let { name, number = $bindable() }: Props = $props();
 </script>
 
-<!-- svelte-ignore a11y_no_redundant_roles -->
-<fieldset role="group">
+<fieldset>
   <button
     type="button"
     onclick={() => {
@@ -47,18 +46,27 @@
 
 <style>
   fieldset {
-    width: fit-content;
-    margin-bottom: 0;
+    border: 0;
+    padding: 0;
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
   }
 
   button {
-    max-width: fit-content;
-    --pico-form-element-spacing-horizontal: 1rem !important;
+    padding: 1rem 1.25rem;
+    background: none;
+    border: 0;
   }
 
-  input[type='text'] {
-    max-width: 3em;
+
+  input {
+    width: 2.5em;
     text-align: center;
-    --pico-form-element-spacing-horizontal: 0rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: 0;
   }
 </style>

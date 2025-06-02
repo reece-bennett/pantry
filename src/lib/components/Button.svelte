@@ -14,6 +14,7 @@
     background: none;
     border: 1px solid var(--border);
     padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
+    font-weight: normal;
   }
 </style>

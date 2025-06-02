@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import Button from '$lib/components/Button.svelte';
   import Counter from '$lib/components/Counter.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import Header from '$lib/components/Header.svelte';
@@ -13,7 +14,7 @@
   let { data, form }: Props = $props();
 
   let recipes = $state(
-    data.recipes.map(({ id, name, servings }) => ({
+    data.list.meals.map(({ recipe: {id, name, servings} }) => ({
       id,
       name,
       servings,
@@ -21,64 +22,70 @@
         form?.data.get(id) ?? data.list.meals.find((meal) => meal.recipeId === id)?.servings ?? 0
     }))
   );
-
-  let selectedRecipes = $derived(recipes.filter((recipe) => recipe.number > 0));
-  let unselectedRecipes = $derived(recipes.filter((recipe) => recipe.number === 0));
 </script>
 
 <div id="root">
-  <Header backUrl="/list/{data.list.id}" />
+  <Header backUrl="/list/{data.list.id}">
+    {#snippet actions()}
+      <button type="submit" form="edit-form" class="icon" aria-label="Save">
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5"/></svg> -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-save-icon lucide-save"
+        >
+          <path
+            d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+          />
+          <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+          <path d="M7 3v4a1 1 0 0 0 1 1h7" /></svg
+        >
+      </button>
+    {/snippet}
+  </Header>
   <main class="container">
     <h1>Editing list</h1>
 
-    <div role="search">
-      <input type="search" placeholder="Search" />
-    </div>
+    <form id="edit-form" method="post" action="?/save" use:enhance>
+      <ul>
+        {#each recipes as recipe}
+          <li>
+            <span>{recipe.name}</span>
+            <Counter name={recipe.id} bind:number={recipe.number} />
+          </li>
+        {:else}
+          <p>No recipes selected</p>
+        {/each}
+      </ul>
 
-    <form method="post" use:enhance>
-      {#each selectedRecipes as recipe}
-        <article class="recipe-row">
-          <span>{recipe.name}</span>
-          <Counter name={recipe.id} bind:number={recipe.number} />
-        </article>
-      {:else}
-        <p>No recipes selected</p>
-      {/each}
-
-      <hr />
-
-      {#each unselectedRecipes as recipe}
-        <article class="recipe-row">
-          <span>{recipe.name}</span>
-          <button
-            type="button"
-            onclick={() => {
-              recipe.number = recipe.servings;
-              recipes = recipes;
-            }}
-          >
-            +
-          </button>
-        </article>
-      {/each}
-
-      <div>
-        <button type="submit">Submit</button>
-        <a href="/recipe">Cancel</a>
-      </div>
+      <Button type="submit" formaction="?/addRecipe">Add recipe</Button>
     </form>
   </main>
   <Footer />
 </div>
 
 <style>
-  .recipe-row {
+  ul {
+    list-style: none;
+    padding: 0rem;
+  }
+
+  li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0;
   }
 
-  .recipe-row button {
-    margin-bottom: 0;
+  li:not(:last-child) {
+    border-bottom: 1px solid var(--border);
   }
 </style>

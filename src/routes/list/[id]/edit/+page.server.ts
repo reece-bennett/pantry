@@ -1,9 +1,8 @@
 import { listSubmissionSchema } from '$lib/schemas/listSubmission';
 import { getList, updateList } from '$lib/server/database/list';
-import { getAllRecipes } from '$lib/server/database/recipe';
 import { parseErrors } from '$lib/server/helpers';
 import { error, fail, redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, RouteParams } from './$types';
 
 export const load = (async ({ params }) => {
   if (isNaN(Number(params.id))) {
@@ -17,33 +16,61 @@ export const load = (async ({ params }) => {
   }
 
   return {
-    recipes: await getAllRecipes(),
     list
   };
 }) satisfies PageServerLoad;
 
 export const actions = {
-  default: async ({ params, request }) => {
-    const formData = await request.formData();
-    const result = listSubmissionSchema.safeParse(formData);
-
-    if (!result.success) {
-      const returnThing = {
-        success: false,
-        data: createData(formData),
-        errors: parseErrors(result)
-      };
-      return fail(400, returnThing);
+  save: async ({ params, request }) => {
+    const error = await save(params, request);
+    if (error) {
+      return error;
     }
 
-    await updateList(Number(params.id), result.data);
-
     redirect(303, `/list/${params.id}`);
+  },
+  addRecipe: async ({ params, request }) => {
+    const error = await save(params, request);
+    if (error) {
+      return error;
+    }
+
+    redirect(303, `/list/${params.id}/select-recipe`);
   }
 };
+
+async function save(params: RouteParams, request: Request) {
+  const formData = await request.formData();
+  const result = listSubmissionSchema.safeParse(formData);
+
+  if (!result.success) {
+    const returnThing = {
+      success: false,
+      data: createData(formData),
+      errors: parseErrors(result)
+    };
+    return fail(400, returnThing);
+  }
+
+  const filteredRecipes = filterRecord(result.data, (portions) => portions > 0);
+
+  await updateList(Number(params.id), filteredRecipes);
+}
 
 function createData(formData: FormData) {
   return new Map(
     Array.from(formData.entries()).map(([key, value]) => [key, parseInt(value.toString())])
   );
+}
+
+function filterRecord<K extends string, V>(
+  obj: Record<K, V>,
+  fn: (value: V) => boolean
+): Record<K, V> {
+  const newObj = {} as Record<K, V>;
+  for (const key in obj) {
+    const value = obj[key];
+    if (fn(value)) newObj[key] = value;
+  }
+  return newObj;
 }

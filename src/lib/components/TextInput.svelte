@@ -5,7 +5,7 @@
     name: string;
     label?: string;
     value?: any;
-    errors: { [x: string]: string } | undefined;
+    errors?: { [x: string]: string };
   }
 
   let { name, label, value = $bindable(''), errors, ...rest }: Props = $props();

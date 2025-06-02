@@ -10,6 +10,8 @@
   }
 
   let { title, backUrl, showFilter = false, filterValue = $bindable(), actions }: Props = $props();
+
+  let searchInputRef: HTMLInputElement | undefined = $state();
 </script>
 
 <header class="container">
@@ -55,25 +57,48 @@
   </nav>
   {#if showFilter}
     <div id="header-search">
-      <input type="search" bind:value={filterValue} />
-      <button class="icon" aria-label="Filter">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-funnel"
+      <input type="search" bind:value={filterValue} bind:this={searchInputRef} />
+      <svg
+        id="search-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-search-icon lucide-search"
+      >
+        <path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" />
+      </svg>
+      {#if filterValue}
+        <button
+          id="clear-search"
+          class="icon"
+          aria-label="Clear search"
+          onclick={() => {
+            filterValue = '';
+            searchInputRef?.focus();
+          }}
         >
-          <path
-            d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"
-          />
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x-icon lucide-x"
+          >
+            <path d="M20 4 4 20" /><path d="m4 4 16 16" />
+          </svg>
+        </button>
+      {/if}
     </div>
   {/if}
 </header>
@@ -101,6 +126,7 @@
   }
 
   #header-search {
+    position: relative;
     display: flex;
     gap: 0.5rem;
     margin-top: 0.5rem;
@@ -108,10 +134,37 @@
     input {
       flex-grow: 1;
       font-size: 1rem;
+      line-height: 1.5;
       background: none;
+      border: 0;
       border: 1px solid var(--border);
       border-radius: 0.5rem;
       padding: 0.5rem;
+      padding-inline-start: 2.325rem;
+
+      &::-webkit-search-cancel-button {
+        display: none;
+      }
+    }
+
+    #search-icon {
+      position: absolute;
+      width: 1rem;
+      height: 1rem;
+      left: 0.8125rem;
+      top: 0.8125rem;
+    }
+
+    #clear-search {
+      position: absolute;
+      right: 0.8125rem;
+      top: 0.8125rem;
+      padding: 0;
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
     }
   }
 </style>

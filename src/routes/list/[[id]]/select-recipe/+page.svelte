@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from '$app/forms';
   import Footer from '$lib/components/Footer.svelte';
   import Header from '$lib/components/Header.svelte';
   import { filterListByKey } from '$lib/fuzzy';
@@ -10,40 +11,24 @@
 
   let { data }: Props = $props();
 
+  let backUrl = data.listId ? `/list/${data.listId}/edit` : '/list';
   let search = $state('');
-
   let recipes = $derived(search ? filterListByKey(data.recipes, 'name', search) : data.recipes);
 </script>
 
 <div id="root">
-  <Header title="recipes" showFilter={true} bind:filterValue={search}>
-    {#snippet actions()}
-      <a href="/recipe/new" class="icon" aria-label="Add recipe">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-plus-icon lucide-plus"
-          ><path d="M5 12h14" /><path d="M12 5v14" /></svg
-        >
-      </a>
-    {/snippet}
-  </Header>
+  <Header {backUrl} showFilter={true} bind:filterValue={search} />
   <main class="container">
     {#if recipes.length > 0}
-      <ul>
-        {#each recipes as { id, name }}
-          <li>
-            <a href="/recipe/{id}">{name}</a>
-          </li>
-        {/each}
-      </ul>
+      <form method="post" use:enhance>
+        <ul>
+          {#each recipes as { id, name }}
+            <li>
+              <button type="submit" name="id" value={id}>{name}</button>
+            </li>
+          {/each}
+        </ul>
+      </form>
     {:else}
       <p>No recipes found</p>
     {/if}
@@ -61,8 +46,14 @@
     border-bottom: 1px solid var(--border);
   }
 
-  li a {
+  li button {
     display: block;
+    width: 100%;
     padding: 1rem 0;
+    text-align: left;
+    background: none;
+    border: none;
+    line-height: 1.5;
+    font-weight: normal;
   }
 </style>

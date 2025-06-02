@@ -26,6 +26,16 @@ export function getRecipe(id: string) {
   });
 }
 
+export function getRecipesByIds(ids: string[]) {
+  return prisma.recipe.findMany({
+    where: {
+      id: {
+        in: ids
+      }
+    }
+  });
+}
+
 export async function createRecipe(recipe: Recipe) {
   return prisma.recipe.create({
     data: {
