@@ -120,7 +120,7 @@
 
     <form id="url-form" method="post" action="?/url" use:enhance>
       <label for="url">Import from a URL</label>
-      <fieldset>
+      <fieldset class="horizontal-group">
         <TextInput type="url" name="url" value={form?.data.url ?? ''} {errors} />
         <Button type="submit">Submit</Button>
       </fieldset>
@@ -192,6 +192,11 @@
     flex-direction: row;
     border: none;
     padding: 0;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.375rem;
   }
 
   hr {

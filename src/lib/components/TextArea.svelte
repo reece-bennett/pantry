@@ -28,6 +28,7 @@
 
   label {
     display: block;
+    margin-bottom: 0.375rem;
   }
 
   textarea {

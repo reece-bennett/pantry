@@ -24,12 +24,17 @@
 </div>
 
 <style>
-  .form-group {
+  :global(:not(.horizontal-group)) > .form-group {
     margin-bottom: var(--typography-spacing-bottom);
+  }
+
+  .form-group {
+    width: 100%;
   }
 
   label {
     display: block;
+    margin-bottom: 0.375rem;
   }
 
   input {
