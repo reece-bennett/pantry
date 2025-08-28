@@ -5,6 +5,20 @@ export function getAllRecipes() {
   return prisma.recipe.findMany();
 }
 
+export function getAllRecipesNotInList(listId: number) {
+  return prisma.recipe.findMany({
+    where: {
+      usedIn: {
+        none: {
+          listId: {
+            equals: listId
+          }
+        }
+      }
+    }
+  })
+}
+
 export function getRecipe(id: string) {
   return prisma.recipe.findUnique({
     where: {

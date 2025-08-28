@@ -1,14 +1,13 @@
-import type { ListSubmission } from '$lib/schemas/listSubmission';
 import { newListSelectRecipeSchema } from '$lib/schemas/newListSelectRecipe.ts';
-import { addRecipe, createList, getList, updateList } from '$lib/server/database/list';
-import { getAllRecipes, getRecipe } from '$lib/server/database/recipe';
+import { addRecipe, createList } from '$lib/server/database/list';
+import { getAllRecipes, getAllRecipesNotInList, getRecipe } from '$lib/server/database/recipe';
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ params }) => {
   return {
     listId: params.id,
-    recipes: await getAllRecipes()
+    recipes: params.id ? await getAllRecipesNotInList(Number(params.id)) : await getAllRecipes()
   };
 }) satisfies PageServerLoad;
 
