@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
   import Footer from '$lib/components/Footer.svelte';
   import Header from '$lib/components/Header.svelte';
-  import Modal from '$lib/components/Modal.svelte';
   import type { PageData } from './$types';
 
   interface Props {
@@ -10,8 +8,6 @@
   }
 
   let { data }: Props = $props();
-
-  let modal: Modal;
 </script>
 
 <div id="root">
@@ -36,6 +32,7 @@
       </a>
     {/snippet}
   </Header>
+
   <main class="container">
     <h1>{data.recipe.name}</h1>
 
@@ -66,24 +63,6 @@
         </li>
       {/each}
     </ol>
-
-    <p>
-      <a href="/recipe/{data.recipe.id}/edit">Edit recipe</a>
-    </p>
-
-    <form id="form" method="post" use:enhance>
-      <input type="hidden" name="id" value={data.recipe.id} />
-      <button type="button" onclick={() => modal.showModal()}>Delete recipe</button>
-    </form>
   </main>
   <Footer />
 </div>
-
-<Modal bind:this={modal}>
-  <h2>Delete recipe '{data.recipe.name}'?</h2>
-  <p>This action cannot be undone!</p>
-  <footer>
-    <button class="secondary" onclick={() => modal.close()}>Cancel</button>
-    <button form="form" onclick={() => modal.close()}>Confirm</button>
-  </footer>
-</Modal>

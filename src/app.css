@@ -44,11 +44,14 @@
   --background: var(--color-neutral-100);
   --background-accent: var(--color-neutral-200);
   --text-primary: var(--color-neutral-800);
-  --text-muted: var(--color-neutral-500);
+  --text-muted: var(--color-neutral-600);
   --border: var(--color-neutral-300);
   --error: var(--color-red-600);
 
   --border-radius: 0.5rem;
+
+  --typography-spacing-top: 2rem;
+  --typography-spacing-bottom: 1rem;
 }
 
 html.dark {
@@ -100,6 +103,44 @@ main {
   overflow-y: auto;
   flex-grow: 1;
 }
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.125;
+  margin-bottom: var(--typography-spacing-bottom);
+}
+
+h2 {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  margin-top: var(--typography-spacing-top);
+  margin-bottom: var(--typography-spacing-bottom);
+}
+
+p {
+  margin-bottom: var(--typography-spacing-bottom);
+}
+
+ol {
+  margin-bottom: var(--typography-spacing-bottom);
+}
+
+ul {
+  margin-bottom: var(--typography-spacing-bottom);
+}
+
+hgroup {
+  margin-bottom: var(--typography-spacing-bottom);
+
+  > * {
+    margin-bottom: 0;
+  }
+
+  > p {
+    color: var(--text-muted);
+  }
+}
+
 
 .note-group {
   display: flex;

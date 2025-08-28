@@ -13,15 +13,21 @@
   let error = $derived(errors?.[name]);
 </script>
 
-{#if label}
-  <label for={name}>{label}</label>
-{/if}
-<input type="text" id={name} {name} {value} aria-invalid={error ? 'true' : undefined} {...rest} />
-{#if error}
-  <small>{error}</small>
-{/if}
+<div class="form-group">
+  {#if label}
+    <label for={name}>{label}</label>
+  {/if}
+  <input type="text" id={name} {name} {value} aria-invalid={error ? 'true' : undefined} {...rest} />
+  {#if error}
+    <small>{error}</small>
+  {/if}
+</div>
 
 <style>
+  .form-group {
+    margin-bottom: var(--typography-spacing-bottom);
+  }
+
   label {
     display: block;
   }

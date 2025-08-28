@@ -1,10 +1,15 @@
 <script lang="ts">
   import type { HTMLButtonAttributes } from 'svelte/elements';
 
-  let { children, type = 'button', ...rest }: HTMLButtonAttributes = $props();
+  interface Props extends HTMLButtonAttributes {
+    fullWidth?: boolean
+    danger?: boolean
+  }
+
+  let { children, type = 'button', fullWidth = false, danger = false, ...rest }: Props = $props();
 </script>
 
-<button {type} {...rest}>
+<button class={{fullWidth, danger}} {type} {...rest}>
   {@render children?.()}
 </button>
 
@@ -16,5 +21,13 @@
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
     font-weight: normal;
+  }
+
+  .fullWidth {
+    width: 100%;
+  }
+
+  .danger {
+    color: var(--error);
   }
 </style>

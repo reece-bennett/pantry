@@ -4,6 +4,7 @@
   import Footer from '$lib/components/Footer.svelte';
   import Header from '$lib/components/Header.svelte';
   import IngredientRow from '$lib/components/IngredientRow.svelte';
+  import Modal from '$lib/components/Modal.svelte';
   import StepRow from '$lib/components/StepRow.svelte';
   import TextArea from '$lib/components/TextArea.svelte';
   import TextInput from '$lib/components/TextInput.svelte';
@@ -15,6 +16,8 @@
   }
 
   let { data, form }: Props = $props();
+
+  let modal: Modal;
 
   $effect(() => {
     initialiseIngredientRows(form, data);
@@ -183,10 +186,28 @@
         />
       {/each}
       <Button onclick={addStep}>Add</Button>
+    </form>
 
-      <Button>Delete recipe</Button>
+    <form id="form" method="post" use:enhance>
+      <input type="hidden" name="id" value={data.recipe.id} />
+      <Button fullWidth danger onclick={() => modal.showModal()}>Delete recipe</Button>
     </form>
   </main>
 
   <Footer />
 </div>
+
+<Modal bind:this={modal}>
+  <h2>Delete recipe '{data.recipe.name}'?</h2>
+  <p>This action cannot be undone!</p>
+  <footer>
+    <button class="secondary" onclick={() => modal.close()}>Cancel</button>
+    <button form="form" onclick={() => modal.close()}>Confirm</button>
+  </footer>
+</Modal>
+
+<style>
+  #edit-form {
+    margin-bottom: var(--typography-spacing-top);
+  }
+</style>
