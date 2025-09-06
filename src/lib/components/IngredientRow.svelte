@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fuzzySearch } from '$lib/fuzzy';
+  import LinkButton from './LinkButton.svelte';
 
   interface Props {
     units: string[];
@@ -35,85 +36,95 @@
   }
 </script>
 
-<fieldset>
-  <input
-    name="amount"
-    class="amount"
-    type="text"
-    inputmode="decimal"
-    bind:value={amount}
-    aria-invalid={errors?.[`amount${index}`] ? 'true' : undefined}
-    autocomplete="off"
-  />
+<div class="row">
+  <fieldset>
+    <input
+      name="amount"
+      class="amount"
+      type="text"
+      inputmode="decimal"
+      bind:value={amount}
+      aria-invalid={errors?.[`amount${index}`] ? 'true' : undefined}
+      autocomplete="off"
+    />
 
-  <select
-    name="unit"
-    class="unit"
-    bind:value={unit}
-    aria-invalid={errors?.[`unit${index}`] ? 'true' : undefined}
-  >
-    {#each units as unit}
-      <option value={unit}>{unit}</option>
-    {/each}
-  </select>
-
-  <input
-    name="ingredient"
-    type="text"
-    list="ingredient-list"
-    autocomplete="off"
-    bind:value={ingredient}
-    aria-invalid={errors?.[`ingredient${index}`] ? 'true' : undefined}
-  />
-  <input name="original" type="hidden" value={original} />
-
-  <datalist id="ingredient-list">
-    {#each ingredients as ingredient}
-      <option value={ingredient}></option>
-    {/each}
-  </datalist>
-
-  <button type="button" class="icon" onclick={remove} disabled={!enableRemove} aria-label="Remove">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg
+    <select
+      name="unit"
+      class="unit"
+      bind:value={unit}
+      aria-invalid={errors?.[`unit${index}`] ? 'true' : undefined}
     >
-  </button>
-</fieldset>
-<div class="message-container">
-  {#if original}
-    <small>Original text: {original}</small>
-  {/if}
-  {#if isNewIngredient}
-    <small>A new ingredient will be created</small>
-  {/if}
-  {#if suggestion}
-    <small
-      >Did you mean <button type="button" class="link-button" onclick={acceptSuggestion}
-        >{suggestion}</button
-      >?</small
+      {#each units as unit}
+        <option value={unit}>{unit}</option>
+      {/each}
+    </select>
+
+    <input
+      name="ingredient"
+      type="text"
+      list="ingredient-list"
+      autocomplete="off"
+      bind:value={ingredient}
+      aria-invalid={errors?.[`ingredient${index}`] ? 'true' : undefined}
+    />
+    <input name="original" type="hidden" value={original} />
+
+    <datalist id="ingredient-list">
+      {#each ingredients as ingredient}
+        <option value={ingredient}></option>
+      {/each}
+    </datalist>
+
+    <button
+      type="button"
+      class="icon"
+      onclick={remove}
+      disabled={!enableRemove}
+      aria-label="Remove"
     >
-  {/if}
-  {#if errors?.[`amount${index}`]}
-    <small class="error">Amount {errors[`amount${index}`]}</small>
-  {/if}
-  {#if errors?.[`unit${index}`]}
-    <small class="error">Unit {errors[`unit${index}`]}</small>
-  {/if}
-  {#if errors?.[`ingredient${index}`]}
-    <small class="error">Ingredient {errors[`ingredient${index}`]}</small>
-  {/if}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg
+      >
+    </button>
+  </fieldset>
+  <div class="message-container">
+    {#if original}
+      <small>Original text: {original}</small>
+    {/if}
+    {#if isNewIngredient}
+      <small>A new ingredient will be created</small>
+    {/if}
+    {#if suggestion}
+      <small>
+        Did you mean <LinkButton onclick={acceptSuggestion}>{suggestion}</LinkButton>?
+      </small>
+    {/if}
+    {#if errors?.[`amount${index}`]}
+      <small class="error">Amount {errors[`amount${index}`]}</small>
+    {/if}
+    {#if errors?.[`unit${index}`]}
+      <small class="error">Unit {errors[`unit${index}`]}</small>
+    {/if}
+    {#if errors?.[`ingredient${index}`]}
+      <small class="error">Ingredient {errors[`ingredient${index}`]}</small>
+    {/if}
+  </div>
 </div>
 
 <style>
+  .row {
+    margin-bottom: 1rem;
+  }
+
   fieldset {
     display: flex;
     padding: 0;
@@ -151,66 +162,10 @@
   }
 
   .error {
-    color: var(--pico-del-color);
+    color: var(--error);
   }
 
   .message-container small {
     display: block;
-    margin-bottom: 0;
-  }
-
-  .message-container small:first-child {
-    margin-top: calc(var(--pico-spacing) * -0.75);
-  }
-
-  .message-container small:last-child {
-    margin-bottom: var(--pico-spacing);
-  }
-
-  .link-button {
-    /* Undoing <button> styles */
-    padding: 0;
-    border: 0;
-    font-size: unset;
-    margin: 0;
-
-    /* <a> styles */
-    --pico-text-decoration: underline;
-    --pico-color: var(--pico-primary);
-    --pico-background-color: transparent;
-    --pico-underline: var(--pico-primary-underline);
-    outline: 0;
-    background-color: var(--pico-background-color);
-    color: var(--pico-color);
-    -webkit-text-decoration: var(--pico-text-decoration);
-    text-decoration: var(--pico-text-decoration);
-    text-decoration-color: var(--pico-underline);
-    text-underline-offset: 0.125em;
-    transition:
-      background-color var(--pico-transition),
-      color var(--pico-transition),
-      box-shadow var(--pico-transition),
-      -webkit-text-decoration var(--pico-transition);
-    transition:
-      background-color var(--pico-transition),
-      color var(--pico-transition),
-      text-decoration var(--pico-transition),
-      box-shadow var(--pico-transition);
-    transition:
-      background-color var(--pico-transition),
-      color var(--pico-transition),
-      text-decoration var(--pico-transition),
-      box-shadow var(--pico-transition),
-      -webkit-text-decoration var(--pico-transition);
-  }
-
-  .link-button:hover,
-  .link-button:active,
-  .link-button:focus {
-    --pico-color: var(--pico-primary-hover);
-    --pico-underline: var(--pico-primary-hover-underline);
-    --pico-text-decoration: underline;
-    --pico-box-shadow: 0;
-    --pico-background-color: transparent;
   }
 </style>

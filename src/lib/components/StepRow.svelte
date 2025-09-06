@@ -14,29 +14,35 @@
 {#if id}
   <input name="stepId" type="hidden" value={id} />
 {/if}
-<fieldset>
-  <textarea name="step" bind:value aria-invalid={errors?.['step' + index] ? 'true' : undefined}
-  ></textarea>
-  <button type="button" class="icon" onclick={remove} disabled={!enableRemove} aria-label="Remove">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg
-    >
-  </button>
-</fieldset>
-{#if errors?.['step' + index]}
-  <small class="error">{errors['step' + index]}</small>
-{/if}
+<div>
+  <fieldset>
+    <textarea name="step" bind:value aria-invalid={errors?.['step' + index] ? 'true' : undefined}
+    ></textarea>
+    <button type="button" class="icon" onclick={remove} disabled={!enableRemove} aria-label="Remove">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg
+      >
+    </button>
+  </fieldset>
+  {#if errors?.['step' + index]}
+    <small class="error">{errors['step' + index]}</small>
+  {/if}
+</div>
 
 <style>
+  div {
+    margin-bottom: 1rem;
+  }
+
   fieldset {
     display: flex;
     padding: 0;
