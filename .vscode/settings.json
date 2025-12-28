@@ -3,12 +3,13 @@
   "editor.detectIndentation": false,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "typescript.preferences.quoteStyle": "single",
-  "cSpell.words": [
-    "pico"
-  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "explorer.compactFolders": false,
   "[css]": {
     "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
   }
 }
