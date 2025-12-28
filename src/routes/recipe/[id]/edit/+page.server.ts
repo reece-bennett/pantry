@@ -1,6 +1,6 @@
 import { recipeSchema } from '$lib/schemas/recipe';
 import { getAllIngredients } from '$lib/server/database/ingredient';
-import { getRecipe, updateRecipe } from '$lib/server/database/recipe';
+import { deleteRecipe, getRecipe, updateRecipe } from '$lib/server/database/recipe';
 import { getAllUnits } from '$lib/server/database/unit';
 import { parseErrors } from '$lib/server/helpers';
 import { Prisma } from '@prisma/client';
@@ -22,7 +22,7 @@ export const load = (async ({ params }) => {
 }) satisfies PageServerLoad;
 
 export const actions = {
-  default: async ({ params, request }) => {
+  save: async ({ params, request }) => {
     const formData = await request.formData();
     const result = recipeSchema.safeParse(formData);
 
@@ -52,6 +52,10 @@ export const actions = {
       }
       throw e;
     }
+  },
+  delete: async ({ params }) => {
+    await deleteRecipe(params.id);
+    redirect(303, '/recipe');
   }
 };
 

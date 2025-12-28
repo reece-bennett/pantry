@@ -1,6 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment';
   import { onDestroy, type Snippet } from 'svelte';
+  import Button from './Button.svelte';
 
   interface Props {
     children: Snippet;
@@ -9,14 +10,10 @@
   let { children }: Props = $props();
 
   const IS_OPEN_CLASS = 'modal-is-open';
-  const OPENING_CLASS = 'modal-is-opening';
-  const CLOSING_CLASS = 'modal-is-closing';
-  const SCROLLBAR_WIDTH_CSS_VAR = '--pico-scrollbar-width';
-  const ANIMATION_DURATION_MS = 400;
+  const SCROLLBAR_WIDTH_CSS_VAR = '--scrollbar-width';
 
   let html: HTMLElement;
   let dialog: HTMLDialogElement;
-  let closing = $state(false);
 
   export function isOpen() {
     return dialog.open;
@@ -27,27 +24,18 @@
     if (scrollbarWidth) {
       html.style.setProperty(SCROLLBAR_WIDTH_CSS_VAR, `${scrollbarWidth}px`);
     }
-    html.classList.add(IS_OPEN_CLASS, OPENING_CLASS);
-    setTimeout(() => {
-      html.classList.remove(OPENING_CLASS);
-    }, ANIMATION_DURATION_MS);
+    html.classList.add(IS_OPEN_CLASS);
     dialog.showModal();
   }
 
   export function close() {
-    html.classList.add(CLOSING_CLASS);
-    closing = true;
-    setTimeout(() => {
-      if (closing) {
-        html.classList.remove(CLOSING_CLASS, IS_OPEN_CLASS);
-        html.style.removeProperty(SCROLLBAR_WIDTH_CSS_VAR);
-        dialog.close();
-      }
-    }, ANIMATION_DURATION_MS);
+    html.classList.remove(IS_OPEN_CLASS);
+    html.style.removeProperty(SCROLLBAR_WIDTH_CSS_VAR);
+    dialog.close();
   }
 
   function getScrollbarWidth() {
-    return window.innerWidth - document.documentElement.clientWidth;
+    return window.innerWidth - (document.querySelector('main')?.clientWidth ?? 0);
   }
 
   if (browser) {
@@ -64,11 +52,6 @@
   }
 
   onDestroy(() => {
-    if (closing) {
-      html.classList.remove(CLOSING_CLASS, IS_OPEN_CLASS);
-      html.style.removeProperty(SCROLLBAR_WIDTH_CSS_VAR);
-      closing = false;
-    }
     if (browser) {
       document.removeEventListener('keydown', handleEscapeClose);
     }
@@ -79,12 +62,44 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <dialog
   bind:this={dialog}
-  onclose={() => {
-    closing = false;
-  }}
   onclick={() => close()}
 >
-  <article onclick={(event) => event.stopPropagation() }>
+  <article onclick={(event) => event.stopPropagation()}>
     {@render children()}
+
+    <footer>
+      <Button type="button" fullWidth onclick={close}>Cancel</Button>
+      <Button type="submit" danger fullWidth onclick={close}>Confirm</Button>
+    </footer>
   </article>
 </dialog>
+
+<style>
+  dialog {
+    padding: 0;
+    border: 0;
+    background: none;
+
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    min-width: 100%;
+    min-height: 100%;
+
+    &:not([open]) {
+      display: none;
+    }
+  }
+
+  article {
+    background: white;
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  footer {
+    display: flex;
+    gap: 0.5rem;
+  }
+</style>

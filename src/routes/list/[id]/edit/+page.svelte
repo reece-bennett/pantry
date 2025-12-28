@@ -4,6 +4,7 @@
   import Counter from '$lib/components/Counter.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import Header from '$lib/components/Header.svelte';
+  import Modal from '$lib/components/Modal.svelte';
   import type { ActionData, PageData } from './$types';
 
   interface Props {
@@ -12,6 +13,8 @@
   }
 
   let { data, form }: Props = $props();
+
+  let modal: Modal;
 
   let recipes = $state(
     data.list.meals.map(({ recipe: {id, name, servings} }) => ({
@@ -51,7 +54,7 @@
     {/snippet}
   </Header>
   <main class="container">
-    <h1>Editing list</h1>
+    <h1>Editing list {data.list.id}</h1>
 
     <form id="edit-form" method="post" action="?/save" use:enhance>
       <ul>
@@ -67,9 +70,18 @@
 
       <Button type="submit" formaction="?/addRecipe">Add recipe</Button>
     </form>
+
+    <Button fullWidth danger onclick={() => modal.showModal()}>Delete list</Button>
   </main>
   <Footer />
 </div>
+
+<form id="delete-form" method="post" action="?/delete" use:enhance>
+  <Modal bind:this={modal}>
+    <h2>Delete 'List {data.list.id}'?</h2>
+    <p>This action cannot be undone!</p>
+  </Modal>
+</form>
 
 <style>
   ul {
@@ -87,5 +99,13 @@
 
   li:not(:last-child) {
     border-bottom: 1px solid var(--border);
+  }
+
+  #edit-form {
+    margin-bottom: var(--typography-spacing-top);
+  }
+
+  #delete-form h2 {
+    margin-top: 0;
   }
 </style>

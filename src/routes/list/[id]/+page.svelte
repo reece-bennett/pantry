@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import type { PageData } from './$types';
-  import Modal from '$lib/components/Modal.svelte';
-  import Header from '$lib/components/Header.svelte';
   import Footer from '$lib/components/Footer.svelte';
+  import Header from '$lib/components/Header.svelte';
+  import type { PageData } from './$types';
 
   interface Props {
     data: PageData;
@@ -48,8 +46,6 @@
         return 0;
       })
   );
-
-  let modal: Modal;
 </script>
 
 <div id="root">
@@ -96,20 +92,6 @@
         </li>
       {/each}
     </ul>
-
-    <form id="form" method="post" use:enhance>
-      <input type="hidden" name="id" value={data.list.id} />
-      <button type="button" onclick={() => modal.showModal()}>Delete list</button>
-    </form>
   </main>
   <Footer />
 </div>
-
-<Modal bind:this={modal}>
-  <h2>Delete 'List {data.list.id}'?</h2>
-  <p>This action cannot be undone!</p>
-  <footer>
-    <button class="secondary" onclick={() => modal.close()}>Cancel</button>
-    <button form="form" onclick={() => modal.close()}>Confirm</button>
-  </footer>
-</Modal>

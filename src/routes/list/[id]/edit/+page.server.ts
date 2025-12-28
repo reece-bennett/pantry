@@ -1,5 +1,5 @@
 import { listSubmissionSchema } from '$lib/schemas/listSubmission';
-import { getList, updateList } from '$lib/server/database/list';
+import { deleteList, getList, updateList } from '$lib/server/database/list';
 import { parseErrors } from '$lib/server/helpers';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, RouteParams } from './$types';
@@ -36,6 +36,15 @@ export const actions = {
     }
 
     redirect(303, `/list/${params.id}/select-recipe`);
+  },
+  delete: async ({ params }) => {
+    if (isNaN(Number(params.id))) {
+      throw error(404);
+    }
+
+    await deleteList(Number(params.id));
+
+    redirect(303, '/list');
   }
 };
 

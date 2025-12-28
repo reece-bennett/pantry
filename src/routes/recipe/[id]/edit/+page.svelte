@@ -132,7 +132,7 @@
       <p>{data.recipe.name}</p>
     </hgroup>
 
-    <form id="edit-form" method="post" use:enhance>
+    <form id="edit-form" method="post" action="?/save" use:enhance>
       <TextInput name="title" label="Title" value={form?.data.title ?? data.recipe.name} {errors} />
 
       <TextArea
@@ -188,26 +188,25 @@
       <Button onclick={addStep}>Add</Button>
     </form>
 
-    <form id="form" method="post" use:enhance>
-      <input type="hidden" name="id" value={data.recipe.id} />
-      <Button fullWidth danger onclick={() => modal.showModal()}>Delete recipe</Button>
-    </form>
+    <Button fullWidth danger onclick={() => modal.showModal()}>Delete recipe</Button>
   </main>
 
   <Footer />
 </div>
 
-<Modal bind:this={modal}>
-  <h2>Delete recipe '{data.recipe.name}'?</h2>
-  <p>This action cannot be undone!</p>
-  <footer>
-    <button class="secondary" onclick={() => modal.close()}>Cancel</button>
-    <button form="form" onclick={() => modal.close()}>Confirm</button>
-  </footer>
-</Modal>
+<form id="delete-form" method="post" action="?/delete" use:enhance>
+  <Modal bind:this={modal}>
+    <h2>Delete recipe '{data.recipe.name}'?</h2>
+    <p>This action cannot be undone!</p>
+  </Modal>
+</form>
 
 <style>
   #edit-form {
     margin-bottom: var(--typography-spacing-top);
+  }
+
+  #delete-form h2 {
+    margin-top: 0;
   }
 </style>

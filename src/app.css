@@ -104,6 +104,11 @@ main {
   flex-grow: 1;
 }
 
+html.modal-is-open main {
+  overflow: hidden;
+  padding-right: calc(1rem + var(--scrollbar-width));
+}
+
 h1 {
   font-size: 2rem;
   line-height: 1.125;
