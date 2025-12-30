@@ -11,7 +11,7 @@
 
   let { data }: Props = $props();
 
-  let backUrl = data.listId ? `/list/${data.listId}/edit` : '/list';
+  let backUrl = $derived(data.listId ? `/list/${data.listId}/edit` : '/list');
   let search = $state('');
   let recipes = $derived(search ? filterListByKey(data.recipes, 'name', search) : data.recipes);
 </script>
