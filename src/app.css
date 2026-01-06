@@ -45,6 +45,7 @@
   --background-accent: var(--color-neutral-200);
   --text-primary: var(--color-neutral-800);
   --text-muted: var(--color-neutral-600);
+  --text-very-muted: var(--color-neutral-500);
   --border: var(--color-neutral-300);
   --error: var(--color-red-600);
 
@@ -59,6 +60,7 @@ html.dark {
   --background-accent: var(--color-neutral-700);
   --text-primary: var(--color-neutral-300);
   --text-muted: var(--color-neutral-400);
+  --text-very-muted: var(--color-neutral-500);
   --border: var(--color-neutral-600)
 }
 
