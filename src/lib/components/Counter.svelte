@@ -57,8 +57,8 @@
     padding: 1rem 1.25rem;
     background: none;
     border: 0;
+    touch-action: manipulation;
   }
-
 
   input {
     width: 2.5em;
