@@ -1,4 +1,4 @@
-@import 'node_modules/modern-normalize/modern-normalize.css';
+@import '../node_modules/modern-normalize/modern-normalize.css';
 
 :root {
   /* https://tailwindcss.com/docs/colors#default-color-palette-reference */
@@ -62,7 +62,9 @@ html.dark {
   --border: var(--color-neutral-600)
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
 }
 
@@ -75,7 +77,8 @@ button {
   color: inherit;
 }
 
-html, body {
+html,
+body {
   height: 100dvh;
   font-family: sans-serif;
   line-height: 1.5;
@@ -137,11 +140,11 @@ ul {
 hgroup {
   margin-bottom: var(--typography-spacing-bottom);
 
-  > * {
+  >* {
     margin-bottom: 0;
   }
 
-  > p {
+  >p {
     color: var(--text-muted);
   }
 }
@@ -168,9 +171,9 @@ hgroup {
   padding: 1rem;
   border-radius: 0.5rem;
   border: 1px solid var(--border);
-/*   background: var(--background-accent); */
+  /*   background: var(--background-accent); */
 
-/*   &:not(:last-child) {
+  /*   &:not(:last-child) {
     border-bottom: 1px solid var(--border);
   } */
 
