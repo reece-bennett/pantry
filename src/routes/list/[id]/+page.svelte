@@ -28,7 +28,7 @@
         )
       )
       .reduce((acc, cur) => {
-        const existing = acc.find((x) => x.name === cur.name);
+        const existing = acc.find((x) => x.name === cur.name && x.unit === cur.unit);
         if (existing) {
           existing.amount += cur.amount;
         } else {
