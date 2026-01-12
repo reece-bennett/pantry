@@ -1,7 +1,22 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { page } from '$app/state';
 
-  let activeSection = $derived(page.route.id?.split('/')[1]);
+  let activeSection = $derived.by(() => {
+    const route = page.route.id;
+    if (route === '/recipe' || route === '/list' || route === '/ingredient') {
+      return route.substring(1);
+    }
+    if (browser) {
+      return sessionStorage.getItem('activeSection') || 'recipe';
+    }
+    return 'recipe';
+  });
+  $effect(() => {
+    if (browser && activeSection) {
+      sessionStorage.setItem('activeSection', activeSection);
+    }
+  });
 </script>
 
 <footer class="container">

@@ -16,8 +16,10 @@
 
 <header class="container">
   <nav>
-    {#if backUrl}
-      <a href={backUrl} id="back-url" aria-label="Back">
+    {#if title}
+      <h1 id="logo">{title}</h1>
+    {:else}
+      <button class="icon" id="back-url" aria-label="Back" onclick={() => window.history.back()}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -31,9 +33,7 @@
           class="lucide lucide-arrow-left-icon lucide-arrow-left"
           ><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg
         >
-      </a>
-    {:else}
-      <h1 id="logo">{title}</h1>
+      </button>
     {/if}
     <div id="header-actions">
       {@render actions?.()}
